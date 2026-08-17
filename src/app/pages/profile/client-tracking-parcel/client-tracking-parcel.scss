@@ -1,0 +1,88 @@
+.client-tracking-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tracking-map {
+  width: 100%;
+  height: 420px;
+  border-radius: 1rem;
+  border: 1px solid var(--surface-border);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.section-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.data-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.data-line span {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+}
+
+.data-line strong {
+  color: var(--text-color);
+  font-size: 0.95rem;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.empty-state {
+  min-height: 240px;
+  border: 1px dashed var(--surface-border);
+  border-radius: 1rem;
+  background: var(--surface-ground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-mini-state {
+  min-height: 120px;
+  border: 1px dashed var(--surface-border);
+  border-radius: 1rem;
+  background: var(--surface-ground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .leaflet-container {
+  border-radius: 1rem;
+}
+
+@media (max-width: 768px) {
+  .tracking-map {
+    height: 340px;
+  }
+
+  .data-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .data-line strong {
+    text-align: left;
+  }
+}

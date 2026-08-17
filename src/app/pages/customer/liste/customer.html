@@ -1,0 +1,86 @@
+<div class="mt-2">
+  <div class="flex align-items-center justify-content-between mb-3">
+    <div>
+      <h2 class="m-0">Liste des clients</h2>
+      <p class="text-color-secondary mt-1 mb-0">
+        Consultez les clients enregistrés dans SmartLog.
+      </p>
+    </div>
+  </div>
+
+  <p-table
+    [value]="(customers$ | async) ?? []"
+    [tableStyle]="{ 'min-width': '60rem' }"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="{first} à {last} sur {totalRecords} clients"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Email</th>
+        <th>Contact</th>
+        <th>Adresse principale</th>
+        <th>Date de création</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-customer>
+      <tr>
+        <td>{{ customer.lastName }}</td>
+
+        <td>{{ customer.firstName }}</td>
+
+        <td>
+          <a [href]="'mailto:' + customer.email">
+            {{ customer.email }}
+          </a>
+        </td>
+
+        <td>
+          <a [href]="'tel:' + customer.phone">
+            {{ customer.phone }}
+          </a>
+        </td>
+
+        <td>
+          @if (getDefaultAddress(customer); as address) {
+            <div>
+              <span>{{ address.street }}</span>
+              <br />
+              <small class="text-color-secondary">
+                {{ address.postalCode }} {{ address.city }},
+                {{ address.country }}
+              </small>
+            </div>
+          } @else {
+            <span class="text-color-secondary">
+              Aucune adresse par defaut
+            </span>
+          }
+        </td>
+
+        <td>
+          {{ customer.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
+        </td>
+        <td>
+          <p-button label="supprimer" (onClick)="deleteCustomer(customer.id)">
+
+          </p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="7" class="text-center p-4">
+          Aucun client trouvé.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

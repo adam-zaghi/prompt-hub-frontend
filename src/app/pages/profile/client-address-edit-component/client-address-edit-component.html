@@ -1,0 +1,258 @@
+<div class="address-edit-page p-3 md:p-4">
+  <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="m-0 text-2xl md:text-3xl font-bold">
+        Modifier l’adresse
+      </h1>
+
+      <p class="m-0 mt-2 text-color-secondary">
+        Mettez à jour les informations de l’adresse et sa position exacte sur la carte.
+      </p>
+    </div>
+
+    <p-button
+      label="Retour profil"
+      icon="pi pi-arrow-left"
+      severity="secondary"
+      [outlined]="true"
+      routerLink="/client/profile"
+    />
+  </div>
+
+  @if (loading()) {
+    <p-card>
+      <p-skeleton width="100%" height="420px" />
+    </p-card>
+  } @else {
+    @if (errorMessage()) {
+      <div class="mb-4 p-3 border-round border-1 surface-border bg-red-50 text-red-700">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="mb-4 p-3 border-round border-1 surface-border bg-green-50 text-green-700">
+        {{ successMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid">
+        <div class="col-12 lg:col-5">
+          <p-card styleClass="h-full">
+            <ng-template pTemplate="header">
+              <div class="p-4 pb-0 flex align-items-center gap-3">
+                <div class="section-icon">
+                  <i class="pi pi-home"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Informations adresse</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Renommez les champs de votre adresse.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            <div class="flex flex-column gap-3">
+              <div>
+                <label for="street" class="font-medium">Rue / Adresse</label>
+                <input
+                  id="street"
+                  type="text"
+                  pInputText
+                  formControlName="street"
+                  class="w-full mt-2"
+                  placeholder="Ex: mer sultan"
+                />
+
+                @if (form.controls.street.touched && form.controls.street.invalid) {
+                  <small class="text-red-500">Adresse requise.</small>
+                }
+              </div>
+
+              <div>
+                <label for="city" class="font-medium">Ville</label>
+                <input
+                  id="city"
+                  type="text"
+                  pInputText
+                  formControlName="city"
+                  class="w-full mt-2"
+                  placeholder="Ex: Casablanca"
+                />
+
+                @if (form.controls.city.touched && form.controls.city.invalid) {
+                  <small class="text-red-500">Ville requise.</small>
+                }
+              </div>
+
+              <div>
+                <label for="state" class="font-medium">État / Région</label>
+                <input
+                  id="state"
+                  type="text"
+                  pInputText
+                  formControlName="state"
+                  class="w-full mt-2"
+                  placeholder="Ex: Casablanca-Settat"
+                />
+              </div>
+
+              <div>
+                <label for="postalCode" class="font-medium">Code postal</label>
+                <input
+                  id="postalCode"
+                  type="text"
+                  pInputText
+                  formControlName="postalCode"
+                  class="w-full mt-2"
+                  placeholder="Ex: 20000"
+                />
+
+                @if (form.controls.postalCode.touched && form.controls.postalCode.invalid) {
+                  <small class="text-red-500">Code postal requis.</small>
+                }
+              </div>
+
+              <div>
+                <label for="country" class="font-medium">Pays</label>
+                <input
+                  id="country"
+                  type="text"
+                  pInputText
+                  formControlName="country"
+                  class="w-full mt-2"
+                  placeholder="Ex: Morocco"
+                />
+
+                @if (form.controls.country.touched && form.controls.country.invalid) {
+                  <small class="text-red-500">Pays requis.</small>
+                }
+              </div>
+
+              @if (address()?.isDefault) {
+                <p-tag
+                  value="Adresse principale"
+                  severity="success"
+                  styleClass="w-fit mt-2"
+                />
+              }
+            </div>
+          </p-card>
+        </div>
+
+        <div class="col-12 lg:col-7">
+          <p-card styleClass="h-full">
+            <ng-template pTemplate="header">
+              <div class="p-4 pb-0 flex align-items-center gap-3">
+                <div class="section-icon">
+                  <i class="pi pi-map-marker"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Position géographique</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Cliquez sur la carte pour choisir le bon emplacement.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            <div
+              id="client-address-edit-map"
+              class="address-map mb-3"
+            ></div>
+
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <label for="latitude" class="font-medium">Latitude</label>
+                <input
+                  id="latitude"
+                  type="number"
+                  step="0.000001"
+                  pInputText
+                  formControlName="latitude"
+                  class="w-full mt-2"
+                />
+
+                @if (form.controls.latitude.touched && form.controls.latitude.invalid) {
+                  <small class="text-red-500">Latitude requise.</small>
+                }
+              </div>
+
+              <div class="col-12 md:col-6">
+                <label for="longitude" class="font-medium">Longitude</label>
+                <input
+                  id="longitude"
+                  type="number"
+                  step="0.000001"
+                  pInputText
+                  formControlName="longitude"
+                  class="w-full mt-2"
+                />
+
+                @if (form.controls.longitude.touched && form.controls.longitude.invalid) {
+                  <small class="text-red-500">Longitude requise.</small>
+                }
+              </div>
+            </div>
+
+            <div class="flex flex-wrap justify-content-between gap-2 mt-3">
+              <div class="flex gap-2 flex-wrap">
+                <p-button
+                  type="button"
+                  label="Utiliser ma position"
+                  icon="pi pi-map-marker"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="useCurrentPosition()"
+                />
+
+                <p-button
+                  type="button"
+                  label="Centrer"
+                  icon="pi pi-crosshairs"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="centerMapOnFormPosition()"
+                />
+              </div>
+
+              <div class="flex gap-2">
+                <p-button
+                  type="button"
+                  label="Annuler"
+                  severity="secondary"
+                  [outlined]="true"
+                  routerLink="/client/profile"
+                />
+
+                <p-button
+                  type="submit"
+                  label="Enregistrer"
+                  icon="pi pi-save"
+                  [loading]="saving()"
+                />
+                @if (!address()?.isDefault) {
+                  <p-button
+                    type="button"
+                    label="Définir comme principale"
+                    icon="pi pi-star"
+                    severity="success"
+                    [outlined]="true"
+                    [loading]="saving()"
+                    (onClick)="setAsDefault()"
+                  />
+                } @else {
+                  <p-tag value="Adresse principale" severity="success" />
+                }
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+    </form>
+  }
+</div>

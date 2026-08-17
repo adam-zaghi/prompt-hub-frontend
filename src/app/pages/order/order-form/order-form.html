@@ -1,0 +1,68 @@
+<div class="mt-2">
+  <p-card>
+    <ng-template #title>
+      Nouvelle commande
+    </ng-template>
+
+    <ng-template #subtitle>
+      Créer une commande logistique pour un client existant.
+    </ng-template>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3 mt-3">
+      <div class="flex flex-column gap-2">
+        <label for="customerId">Client</label>
+
+        <select
+          id="customerId"
+          formControlName="customerId"
+          class="p-inputtext p-component"
+        >
+          <option [ngValue]="null">Sélectionner un client</option>
+
+          @for (customer of (customers$ | async) ?? []; track customer.id) {
+            <option [ngValue]="customer.id">
+              {{ customer.firstName }} {{ customer.lastName }} — {{ customer.email }}
+            </option>
+          }
+        </select>
+
+        @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
+          <small class="text-red-500">Le client est obligatoire.</small>
+        }
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label for="totalWeight">Poids total estimé</label>
+
+        <input
+          id="totalWeight"
+          type="number"
+          pInputText
+          formControlName="totalWeight"
+          placeholder="Exemple : 25"
+        />
+
+        @if (form.controls.totalWeight.invalid && form.controls.totalWeight.touched) {
+          <small class="text-red-500">
+            Le poids total est obligatoire.
+          </small>
+        }
+      </div>
+
+      <div class="flex gap-2 mt-3">
+        <p-button
+          label="Créer la commande"
+          icon="pi pi-check"
+          type="submit"
+        />
+
+        <p-button
+          label="Annuler"
+          severity="secondary"
+          routerLink="/orders"
+          type="button"
+        />
+      </div>
+    </form>
+  </p-card>
+</div>

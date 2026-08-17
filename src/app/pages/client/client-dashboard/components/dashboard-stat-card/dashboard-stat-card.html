@@ -1,0 +1,21 @@
+<p-card styleClass="h-full">
+  <div class="stat-card">
+    <div class="stat-icon">
+      <i [class]="icon()"></i>
+    </div>
+
+    <div>
+      <p class="m-0 text-color-secondary text-sm">
+        {{ title() }}
+      </p>
+
+      <h2 class="m-0 mt-1">
+        {{ value() }}
+      </h2>
+
+      <p class="m-0 mt-1 text-color-secondary text-xs">
+        {{ subtitle() }}
+      </p>
+    </div>
+  </div>
+</p-card>

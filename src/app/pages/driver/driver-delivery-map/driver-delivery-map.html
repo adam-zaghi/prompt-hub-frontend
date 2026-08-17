@@ -1,0 +1,37 @@
+<p-card styleClass="h-full">
+  <ng-template pTemplate="header">
+    <div class="map-card-header">
+      <div class="flex align-items-center gap-3">
+        <div class="section-icon">
+          <i class="pi pi-map-marker"></i>
+        </div>
+
+        <div>
+          <h3 class="m-0">Carte livraison</h3>
+          <p class="m-0 mt-1 text-sm text-color-secondary">
+            Votre position et la destination client.
+          </p>
+        </div>
+      </div>
+
+      <p-tag
+        [value]="statusLabel()"
+        [severity]="statusSeverity()"
+      />
+    </div>
+  </ng-template>
+
+  <div #mapContainer class="delivery-map"></div>
+
+  <div class="map-help mt-3">
+    <div class="map-help-item">
+      <i class="pi pi-circle-fill driver-dot"></i>
+      <span>Votre position</span>
+    </div>
+
+    <div class="map-help-item">
+      <i class="pi pi-circle-fill destination-dot"></i>
+      <span>Destination client</span>
+    </div>
+  </div>
+</p-card>

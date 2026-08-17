@@ -1,0 +1,503 @@
+<div class="driver-delivery-detail-page p-3 md:p-4">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="m-0 text-2xl md:text-3xl font-bold">
+        Livraison #{{ assignmentId }}
+      </h1>
+
+      <p class="m-0 mt-2 text-color-secondary">
+        Consultez la livraison, affichez votre position et mettez à jour l’avancement.
+      </p>
+    </div>
+
+    <div class="flex gap-2 flex-wrap">
+      <p-button
+        type="button"
+        label="Retour"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        routerLink="/driver/deliveries"
+      />
+
+      <p-button
+        type="button"
+        label="Actualiser"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        [loading]="loading()"
+        (onClick)="loadAssignment()"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="grid">
+      <div class="col-12 lg:col-7">
+        <p-card>
+          <p-skeleton width="100%" height="430px" />
+        </p-card>
+      </div>
+
+      <div class="col-12 lg:col-5">
+        <p-card>
+          <p-skeleton width="100%" height="430px" />
+        </p-card>
+      </div>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="alert alert-error mb-4">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="alert alert-success mb-4">
+        {{ successMessage() }}
+      </div>
+    }
+
+    @if (assignment(); as a) {
+      <div class="grid">
+
+
+            <div class="col-12 lg:col-7">
+              <app-driver-delivery-map
+                [destination]="destination()"
+                [driverPosition]="driverPosition()"
+                [statusLabel]="getStatusLabel(a.status)"
+                [statusSeverity]="getStatusSeverity(a.status)"
+              />
+            </div>
+
+
+        <div class="col-12 lg:col-5">
+          <p-card styleClass="mb-4">
+            <ng-template pTemplate="header">
+              <div class="simple-card-header">
+                <div class="section-icon">
+                  <i class="pi pi-truck"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Informations livraison</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    État actuel de votre livraison.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            <div class="flex flex-column gap-3">
+              <div class="data-line">
+                <span>Livraison</span>
+                <strong>#{{ a.id }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Colis</span>
+                <strong>#{{ a.parcelId }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Statut</span>
+                <p-tag
+                  [value]="getStatusLabel(a.status)"
+                  [severity]="getStatusSeverity(a.status)"
+                />
+              </div>
+
+              <div class="data-line">
+                <span>Affectée le</span>
+                <strong>{{ a.assignedAt ? (a.assignedAt | date:'short') : '-' }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Démarrée le</span>
+                <strong>{{ a.startedAt ? (a.startedAt | date:'short') : '-' }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Terminée le</span>
+                <strong>{{ a.completedAt ? (a.completedAt | date:'short') : '-' }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Notes</span>
+                <strong>{{ a.notes || '-' }}</strong>
+              </div>
+            </div>
+          </p-card>
+
+          <p-card styleClass="mb-4">
+            <ng-template pTemplate="header">
+              <div class="simple-card-header">
+                <div class="section-icon">
+                  <i class="pi pi-map"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Destination client</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Adresse où le colis doit être livré.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            @if (destination(); as dest) {
+              <div class="flex flex-column gap-3">
+                <div class="data-line">
+                  <span>Adresse</span>
+                  <strong>{{ dest.fullAddress || '-' }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Latitude</span>
+                  <strong>{{ dest.latitude }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Longitude</span>
+                  <strong>{{ dest.longitude }}</strong>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-mini-state">
+                <i class="pi pi-info-circle text-2xl text-color-secondary"></i>
+                <p class="m-0 mt-2 text-color-secondary">
+                  Destination non disponible pour ce colis.
+                </p>
+              </div>
+            }
+          </p-card>
+          <p-card styleClass="mb-4">
+            <ng-template pTemplate="header">
+              <div class="simple-card-header">
+                <div class="section-icon">
+                  <i class="pi pi-clock"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Estimation du trajet</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Distance restante, durée estimée et heure d’arrivée.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            @if (estimate(); as eta) {
+              <div class="flex flex-column gap-3">
+                <div class="data-line">
+                  <span>Statut délai</span>
+                  <p-tag
+                    [value]="getDelayLabel()"
+                    [severity]="getDelaySeverity()"
+                  />
+                </div>
+
+                <div class="data-line">
+                  <span>Distance restante</span>
+                  <strong>{{ formatDistance(eta.remainingDistanceMeters) }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Durée restante</span>
+                  <strong>{{ formatDuration(eta.remainingDurationSeconds) }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Arrivée estimée</span>
+                  <strong>
+                    {{ eta.estimatedArrival ? (eta.estimatedArrival | date:'shortTime') : '-' }}
+                  </strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Retard estimé</span>
+                  <strong>{{ eta.delayInMinutes || 0 }} min</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Dernier calcul</span>
+                  <strong>{{ eta.updatedAt ? (eta.updatedAt | date:'shortTime') : '-' }}</strong>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-mini-state">
+                <i class="pi pi-clock text-2xl text-color-secondary"></i>
+                <p class="m-0 mt-2 text-color-secondary">
+                  L’estimation sera calculée après l’envoi de votre position.
+                </p>
+              </div>
+            }
+          </p-card>
+          <p-card styleClass="mb-4">
+            <ng-template pTemplate="header">
+              <div class="simple-card-header">
+                <div class="section-icon">
+                  <i class="pi pi-box"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Informations colis</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Colis lié à cette livraison.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            @if (a.parcel) {
+              <div class="flex flex-column gap-3">
+                <div class="data-line">
+                  <span>Colis</span>
+                  <strong>#{{ a.parcel.id }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Commande</span>
+                  <strong>#{{ a.parcel.orderId }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Statut colis</span>
+                  <strong>{{ a.parcel.status }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Priorité</span>
+                  <strong>{{ a.parcel.priority }}</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Poids</span>
+                  <strong>{{ a.parcel.weight }} kg</strong>
+                </div>
+
+                <div class="data-line">
+                  <span>Date prévue</span>
+                  <strong>
+                    {{ a.parcel.estimatedDelivery ? (a.parcel.estimatedDelivery | date:'short') : '-' }}
+                  </strong>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-mini-state">
+                <i class="pi pi-info-circle text-2xl text-color-secondary"></i>
+                <p class="m-0 mt-2 text-color-secondary">
+                  Détails du colis non chargés. Colis #{{ a.parcelId }}
+                </p>
+              </div>
+            }
+          </p-card>
+
+          <p-card>
+            <ng-template pTemplate="header">
+              <div class="simple-card-header">
+                <div class="section-icon">
+                  <i class="pi pi-bolt"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Actions</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Actions disponibles selon le statut.
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+
+            <div class="flex flex-column gap-2">
+              @if (canPreviewPosition()) {
+                <p-button
+                  type="button"
+                  label="Afficher ma position"
+                  icon="pi pi-map"
+                  severity="secondary"
+                  [outlined]="true"
+                  [loading]="positionLoading()"
+                  styleClass="w-full justify-content-center"
+                  (onClick)="showMyPositionOnMap()"
+                />
+              }
+
+              @if (canStart()) {
+                <p-button
+                  type="button"
+                  label="Démarrer la livraison"
+                  icon="pi pi-play"
+                  [loading]="actionLoading()"
+                  styleClass="w-full justify-content-center"
+                  (onClick)="startDelivery()"
+                />
+              }
+
+              @if (canSendPosition()) {
+                <p-button
+                  type="button"
+                  label="Envoyer ma position actuelle"
+                  icon="pi pi-map-marker"
+                  severity="info"
+                  [loading]="positionLoading()"
+                  styleClass="w-full justify-content-center"
+                  (onClick)="sendCurrentPosition()"
+                />
+              }
+
+              @if (canComplete()) {
+                <p-button
+                  type="button"
+                  label="Terminer la livraison"
+                  icon="pi pi-check"
+                  severity="success"
+                  [loading]="actionLoading()"
+                  styleClass="w-full justify-content-center"
+                  (onClick)="completeDelivery()"
+                />
+              }
+
+              @if (canFail()) {
+                <p-button
+                  type="button"
+                  label="Signaler un problème"
+                  icon="pi pi-exclamation-triangle"
+                  severity="danger"
+                  [outlined]="true"
+                  [loading]="actionLoading()"
+                  styleClass="w-full justify-content-center"
+                  (onClick)="failDelivery()"
+                />
+              }
+
+              @if (!canStart() && !canSendPosition() && !canComplete() && !canFail()) {
+                <div class="empty-mini-state">
+                  <i class="pi pi-lock text-2xl text-color-secondary"></i>
+                  <p class="m-0 mt-2 text-color-secondary">
+                    Cette livraison est en lecture seule.
+                  </p>
+                </div>
+              }
+            </div>
+          </p-card>
+        </div>
+
+        <div class="col-12">
+          <div class="grid">
+            <div class="col-12 lg:col-6">
+              <p-card styleClass="h-full">
+                <ng-template pTemplate="header">
+                  <div class="simple-card-header">
+                    <div class="section-icon">
+                      <i class="pi pi-map-marker"></i>
+                    </div>
+
+                    <div>
+                      <h3 class="m-0">Position affichée sur la carte</h3>
+                      <p class="m-0 mt-1 text-sm text-color-secondary">
+                        Position actuelle utilisée pour la prévisualisation.
+                      </p>
+                    </div>
+                  </div>
+                </ng-template>
+
+                @if (driverPosition(); as pos) {
+                  <div class="grid">
+                    <div class="col-12 md:col-4">
+                      <div class="data-box">
+                        <span>Latitude</span>
+                        <strong>{{ pos.latitude }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-12 md:col-4">
+                      <div class="data-box">
+                        <span>Longitude</span>
+                        <strong>{{ pos.longitude }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-12 md:col-4">
+                      <div class="data-box">
+                        <span>Précision</span>
+                        <strong>{{ pos.accuracy || '-' }} m</strong>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="empty-mini-state">
+                    <i class="pi pi-map text-2xl text-color-secondary"></i>
+                    <p class="m-0 mt-2 text-color-secondary">
+                      Aucune position affichée pour le moment.
+                    </p>
+                  </div>
+                }
+              </p-card>
+            </div>
+
+            <div class="col-12 lg:col-6">
+              <p-card styleClass="h-full">
+                <ng-template pTemplate="header">
+                  <div class="simple-card-header">
+                    <div class="section-icon">
+                      <i class="pi pi-location-arrow"></i>
+                    </div>
+
+                    <div>
+                      <h3 class="m-0">Dernière position envoyée</h3>
+                      <p class="m-0 mt-1 text-sm text-color-secondary">
+                        Position sauvegardée et visible côté client.
+                      </p>
+                    </div>
+                  </div>
+                </ng-template>
+
+                @if (lastPosition(); as last) {
+                  <div class="grid">
+                    <div class="col-12 md:col-3">
+                      <div class="data-box">
+                        <span>Latitude</span>
+                        <strong>{{ last.latitude }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-12 md:col-3">
+                      <div class="data-box">
+                        <span>Longitude</span>
+                        <strong>{{ last.longitude }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-12 md:col-3">
+                      <div class="data-box">
+                        <span>Précision</span>
+                        <strong>{{ last.accuracy || '-' }} m</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-12 md:col-3">
+                      <div class="data-box">
+                        <span>Heure</span>
+                        <strong>{{ last.eventTime | date:'short' }}</strong>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="empty-mini-state">
+                    <i class="pi pi-location-arrow text-2xl text-color-secondary"></i>
+                    <p class="m-0 mt-2 text-color-secondary">
+                      Aucune position envoyée pour cette livraison.
+                    </p>
+                  </div>
+                }
+              </p-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

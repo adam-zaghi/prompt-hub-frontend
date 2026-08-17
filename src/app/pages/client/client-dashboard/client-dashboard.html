@@ -1,0 +1,137 @@
+<div class="client-dashboard-page p-3 md:p-4">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="m-0 text-2xl md:text-3xl font-bold">
+        Tableau de bord client
+      </h1>
+
+      <p class="m-0 mt-2 text-color-secondary">
+        Bonjour {{ customerFullName() || 'client' }}, voici le résumé de vos commandes et livraisons.
+      </p>
+    </div>
+
+    <p-button
+      type="button"
+      label="Actualiser"
+      icon="pi pi-refresh"
+      severity="secondary"
+      [outlined]="true"
+      [loading]="loading()"
+      (onClick)="loadDashboard()"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="grid">
+      @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+        <div class="col-12 md:col-6 lg:col-3">
+          <p-card>
+            <p-skeleton width="100%" height="90px" />
+          </p-card>
+        </div>
+      }
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="alert alert-error mb-4">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="grid mb-4">
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Commandes"
+          [value]="stats().totalOrders"
+          icon="pi pi-shopping-cart"
+          subtitle="Total de vos commandes"
+        />
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Commandes en cours"
+          [value]="stats().activeOrders"
+          icon="pi pi-clock"
+          subtitle="Draft, validées ou en livraison"
+        />
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Total colis"
+          [value]="stats().totalParcels"
+          icon="pi pi-box"
+          subtitle="Tous vos colis"
+        />
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="En livraison"
+          [value]="stats().outForDeliveryParcels"
+          icon="pi pi-truck"
+          subtitle="Colis actuellement en route"
+        />
+      </div>
+    </div>
+
+    <div class="grid mb-4">
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Prêts à expédier"
+          [value]="stats().readyParcels"
+          icon="pi pi-send"
+          subtitle="Colis prêts pour livraison"
+        />
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Livrés"
+          [value]="stats().deliveredParcels"
+          icon="pi pi-check-circle"
+          subtitle="Colis déjà livrés"
+        />
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Annulés"
+          [value]="stats().cancelledOrders"
+          icon="pi pi-times-circle"
+          subtitle="Commandes annulées"
+        />
+      </div>
+
+      <div class="col-12 md:col-6 lg:col-3">
+        <app-dashboard-stat-card
+          title="Problèmes"
+          [value]="stats().problemParcels"
+          icon="pi pi-exclamation-triangle"
+          subtitle="Colis annulés ou retournés"
+        />
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="col-12 lg:col-7">
+        <app-client-active-delivery-card
+          [activeDelivery]="activeDelivery()"
+        />
+      </div>
+
+      <div class="col-12 lg:col-5">
+        <app-client-address-card
+          [address]="defaultAddress()"
+        />
+
+        <app-client-alerts-card
+          class="block mt-4"
+          [delayedCount]="delayedCount()"
+          [activeDelivery]="activeDelivery()"
+        />
+      </div>
+    </div>
+  }
+</div>

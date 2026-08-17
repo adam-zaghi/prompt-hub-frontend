@@ -1,0 +1,44 @@
+<p-card styleClass="h-full">
+  <ng-template pTemplate="header">
+    <div class="simple-card-header">
+      <div class="section-icon">
+        <i class="pi pi-bell"></i>
+      </div>
+
+      <div>
+        <h3 class="m-0">Alertes</h3>
+        <p class="m-0 mt-1 text-sm text-color-secondary">
+          Informations importantes sur vos livraisons.
+        </p>
+      </div>
+    </div>
+  </ng-template>
+
+  @if (delayedCount() > 0) {
+    <div class="alert alert-error">
+      <div class="flex align-items-center justify-content-between gap-3">
+        <div>
+          <strong>{{ delayedCount() }} livraison en retard</strong>
+          <p class="m-0 mt-1 text-sm">
+            Une livraison risque de dépasser l’heure prévue.
+          </p>
+        </div>
+
+        <p-tag value="Attention" severity="danger" />
+      </div>
+    </div>
+  } @else {
+    <div class="alert alert-success">
+      <div class="flex align-items-center justify-content-between gap-3">
+        <div>
+          <strong>Aucun retard détecté</strong>
+          <p class="m-0 mt-1 text-sm">
+            Vos livraisons sont actuellement dans les délais.
+          </p>
+        </div>
+
+        <p-tag value="OK" severity="success" />
+      </div>
+    </div>
+  }
+</p-card>

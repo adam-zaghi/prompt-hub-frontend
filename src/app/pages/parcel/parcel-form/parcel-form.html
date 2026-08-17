@@ -1,0 +1,114 @@
+<div class="mt-2">
+  <p-card>
+    <ng-template #title>
+      Nouveau colis
+    </ng-template>
+
+    <ng-template #subtitle>
+      Créer un colis pour la commande #{{ orderId }}.
+    </ng-template>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3 mt-3">
+      <div class="grid">
+        <div class="col-12 md:col-3">
+          <label for="weight">Poids</label>
+          <input
+            id="weight"
+            type="number"
+            pInputText
+            formControlName="weight"
+            placeholder="Ex : 2.5"
+            class="w-full mt-2"
+          />
+        </div>
+
+        <div class="col-12 md:col-3">
+          <label for="length">Longueur</label>
+          <input
+            id="length"
+            type="number"
+            pInputText
+            formControlName="length"
+            placeholder="cm"
+            class="w-full mt-2"
+          />
+        </div>
+
+        <div class="col-12 md:col-3">
+          <label for="width">Largeur</label>
+          <input
+            id="width"
+            type="number"
+            pInputText
+            formControlName="width"
+            placeholder="cm"
+            class="w-full mt-2"
+          />
+        </div>
+
+        <div class="col-12 md:col-3">
+          <label for="height">Hauteur</label>
+          <input
+            id="height"
+            type="number"
+            pInputText
+            formControlName="height"
+            placeholder="cm"
+            class="w-full mt-2"
+          />
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="col-12 md:col-4">
+          <label for="priority">Priorité</label>
+
+          <select
+            id="priority"
+            formControlName="priority"
+            class="p-inputtext p-component w-full mt-2"
+          >
+            @for (priority of priorities; track priority) {
+              <option [ngValue]="priority">
+                {{ priority }}
+              </option>
+            }
+          </select>
+
+          <small class="text-color-secondary">
+            La date prévue sera calculée automatiquement selon la priorité.
+          </small>
+        </div>
+
+        <div class="col-12 md:col-8 flex align-items-end gap-4">
+          <label class="flex align-items-center gap-2">
+            <input type="checkbox" formControlName="fragile" />
+            Fragile
+          </label>
+
+          <label class="flex align-items-center gap-2">
+            <input type="checkbox" formControlName="insured" />
+            Assuré
+          </label>
+        </div>
+      </div>
+
+
+
+      <div class="flex gap-2 mt-3">
+        <p-button
+          label="Créer le colis"
+          icon="pi pi-check"
+          type="submit"
+        />
+
+        <p-button
+          label="Annuler"
+          severity="secondary"
+          type="button"
+          [routerLink]="['/orders', orderId]"
+        />
+      </div>
+    </form>
+  </p-card>
+</div>

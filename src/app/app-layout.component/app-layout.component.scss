@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.desktop-sidebar {
+  width: var(--sidebar-width);
+}
+
+.main-column {
+  margin-left: var(--sidebar-width);
+}
+
+/* Sur mobile, la sidebar fixe disparaît */
+@media screen and (max-width: 767px) {
+  .main-column {
+    margin-left: 0;
+  }
+}

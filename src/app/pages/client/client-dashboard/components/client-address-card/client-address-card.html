@@ -1,0 +1,56 @@
+<p-card class="p-3">
+  <ng-template pTemplate="header">
+    <div class="simple-card-header">
+      <div class="section-icon">
+        <i class="pi pi-home"></i>
+      </div>
+
+      <div>
+        <h3 class="m-0">Adresse principale</h3>
+        <p class="m-0 mt-1 text-sm text-color-secondary">
+          Adresse utilisée par défaut pour vos livraisons.
+        </p>
+      </div>
+    </div>
+  </ng-template>
+
+  @if (address(); as a) {
+    <div class="flex flex-column gap-3">
+      <div class="data-line">
+        <span>Rue :</span>
+        <strong>{{ a.street }}</strong>
+      </div>
+
+      <div class="data-line">
+        <span>Ville :</span>
+        <strong>{{ a.city }}</strong>
+      </div>
+
+      <div class="data-line">
+        <span>Code postal :</span>
+        <strong>{{ a.postalCode }}</strong>
+      </div>
+
+      <div class="data-line">
+        <span>Pays :</span>
+        <strong>{{ a.country }}</strong>
+      </div>
+
+      <p-button
+        label="Gérer mes adresses"
+        icon="pi pi-map"
+        severity="secondary"
+        [outlined]="true"
+        styleClass="w-full justify-content-center"
+        routerLink="/client/addresses"
+      />
+    </div>
+  } @else {
+    <div class="empty-mini-state">
+      <i class="pi pi-map text-2xl text-color-secondary"></i>
+      <p class="m-0 mt-2 text-color-secondary">
+        Aucune adresse principale définie.
+      </p>
+    </div>
+  }
+</p-card>

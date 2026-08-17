@@ -1,0 +1,141 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="p-4">
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="p-4">
+        <h2 class="m-0">ajouter une adresse</h2>
+      </div>
+    </ng-template>
+
+
+    <div class="flex align-items-center gap-3 flex-wrap">
+      <div class="field flex-grow-1 w-4">
+        <label for="country">Pays *</label>
+        <input
+          formControlName="country"
+          id="country"
+          type="text"
+          pInputText
+          class="w-full"
+        />
+      </div>
+
+      <div class="field flex-grow-1 w-4">
+        <label for="state">État / Région</label>
+        <input
+          formControlName="state"
+          id="state"
+          type="text"
+          pInputText
+          class="w-full"
+        />
+      </div>
+
+      <div class="field flex-grow-1 w-4">
+        <label for="city">Ville *</label>
+        <input
+          formControlName="city"
+          id="city"
+          type="text"
+          pInputText
+          class="w-full"
+        />
+      </div>
+
+      <div class="field flex-grow-1 w-4">
+        <label for="postalCode">Code postal *</label>
+        <input
+          formControlName="postalCode"
+          id="postalCode"
+          type="text"
+          pInputText
+          class="w-full"
+        />
+      </div>
+
+      <div class="field flex-grow-1 w-4">
+        <label for="street">Rue / Adresse *</label>
+        <input
+          formControlName="street"
+          id="street"
+          type="text"
+          pInputText
+          class="w-full"
+        />
+      </div>
+    </div>
+
+    <h3 class="mt-4 mb-3">Position sur la carte</h3>
+
+    <p class="text-color-secondary">
+      Cliquez sur la carte pour choisir la position exacte de l’adresse de livraison.
+    </p>
+
+    <div
+      id="customer-address-map"
+      class="mb-3"
+      style="height: 380px; width: 100%; border-radius: 12px;"
+    ></div>
+
+    <div class="flex align-items-center gap-3 flex-wrap">
+      <div class="field flex-grow-1 w-4">
+        <label for="latitude">Latitude *</label>
+        <input
+          formControlName="latitude"
+          id="latitude"
+          type="number"
+          step="0.000001"
+          pInputText
+          class="w-full"
+        />
+      </div>
+
+      <div class="field flex-grow-1 w-4">
+        <label for="longitude">Longitude *</label>
+        <input
+          formControlName="longitude"
+          id="longitude"
+          type="number"
+          step="0.000001"
+          pInputText
+          class="w-full"
+        />
+      </div>
+
+      <div class="field flex align-items-end gap-2">
+        <p-button
+          type="button"
+          label="Utiliser ma position"
+          icon="pi pi-map-marker"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="useCurrentPosition()"
+        />
+
+        <p-button
+          type="button"
+          label="Centrer"
+          icon="pi pi-crosshairs"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="centerMapOnFormPosition()"
+        />
+      </div>
+    </div>
+
+    <div class="flex justify-content-end gap-2 mt-4">
+      <p-button
+        type="button"
+        label="Annuler"
+        severity="secondary"
+        [outlined]="true"
+        routerLink="/customers"
+      />
+
+      <p-button
+        type="submit"
+        label="Créer"
+        icon="pi pi-check"
+      />
+    </div>
+  </p-card>
+</form>

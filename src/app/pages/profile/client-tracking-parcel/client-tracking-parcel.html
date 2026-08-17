@@ -1,0 +1,256 @@
+<div class="client-tracking-page p-3 md:p-4">
+  <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="m-0 text-2xl md:text-3xl font-bold">
+        Suivi du colis #{{ parcelId }}
+      </h1>
+
+      <p class="m-0 mt-2 text-color-secondary">
+        Consultez la position du livreur, l’estimation de livraison et l’historique du suivi.
+      </p>
+    </div>
+
+    <div class="flex gap-2 flex-wrap">
+      <p-button
+        type="button"
+        label="Retour aux colis"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        routerLink="/client/parcels"
+      />
+
+      <p-button
+        type="button"
+        label="Actualiser"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        [loading]="refreshing()"
+        (onClick)="loadTracking(false)"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="grid">
+      <div class="col-12 lg:col-7">
+        <p-card>
+          <p-skeleton width="100%" height="420px" />
+        </p-card>
+      </div>
+
+      <div class="col-12 lg:col-5">
+        <p-card>
+          <p-skeleton width="100%" height="420px" />
+        </p-card>
+      </div>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="mb-4 p-3 border-round border-1 surface-border bg-red-50 text-red-700">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="grid">
+      <div class="col-12 lg:col-7">
+        <p-card styleClass="h-full">
+          <ng-template pTemplate="header">
+            <div class="p-4 pb-0 flex align-items-center justify-content-between gap-3 flex-wrap">
+              <div class="flex align-items-center gap-3">
+                <div class="section-icon">
+                  <i class="pi pi-map-marker"></i>
+                </div>
+
+                <div>
+                  <h3 class="m-0">Carte de suivi</h3>
+                  <p class="m-0 mt-1 text-sm text-color-secondary">
+                    Position actuelle ou dernière position connue du livreur.
+                  </p>
+                </div>
+              </div>
+
+              <p-tag
+                [value]="getTrackingStatusLabel()"
+                [severity]="getTrackingStatusSeverity()"
+              />
+            </div>
+          </ng-template>
+
+          <div
+            id="client-tracking-map"
+            class="tracking-map"
+          ></div>
+        </p-card>
+      </div>
+
+      <div class="col-12 lg:col-5">
+        <p-card styleClass="mb-4">
+          <ng-template pTemplate="header">
+            <div class="p-4 pb-0 flex align-items-center gap-3">
+              <div class="section-icon">
+                <i class="pi pi-clock"></i>
+              </div>
+
+              <div>
+                <h3 class="m-0">Estimation</h3>
+                <p class="m-0 mt-1 text-sm text-color-secondary">
+                  ETA dynamique calculée pendant la livraison.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+          <div class="flex flex-column gap-3">
+            <div class="data-line">
+              <span>Statut délai</span>
+              <p-tag
+                [value]="getDelayLabel()"
+                [severity]="getDelaySeverity()"
+              />
+            </div>
+
+            <div class="data-line">
+              <span>Distance restante</span>
+              <strong>{{ formatDistance(estimate()?.remainingDistanceMeters) }}</strong>
+            </div>
+
+            <div class="data-line">
+              <span>Durée restante</span>
+              <strong>{{ formatDuration(estimate()?.remainingDurationSeconds) }}</strong>
+            </div>
+
+            <div class="data-line">
+              <span>ETA dynamique</span>
+              <strong>
+                {{ estimate()?.estimatedArrival ? (estimate()?.estimatedArrival | date:'short') : '-' }}
+              </strong>
+            </div>
+
+            <div class="data-line">
+              <span>Retard estimé</span>
+              <strong>{{ estimate()?.delayInMinutes || 0 }} min</strong>
+            </div>
+          </div>
+        </p-card>
+
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="p-4 pb-0 flex align-items-center gap-3">
+              <div class="section-icon">
+                <i class="pi pi-map"></i>
+              </div>
+
+              <div>
+                <h3 class="m-0">Dernière position</h3>
+                <p class="m-0 mt-1 text-sm text-color-secondary">
+                  Dernière position reçue depuis le livreur.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+          @if (lastPosition()) {
+            <div class="flex flex-column gap-3">
+              <div class="data-line">
+                <span>Latitude</span>
+                <strong>{{ lastPosition()?.latitude }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Longitude</span>
+                <strong>{{ lastPosition()?.longitude }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Lieu</span>
+                <strong>{{ lastPosition()?.locationLabel || '-' }}</strong>
+              </div>
+
+              <div class="data-line">
+                <span>Heure</span>
+                <strong>{{ lastPosition()?.eventTime | date:'short' }}</strong>
+              </div>
+            </div>
+          } @else {
+            <div class="empty-mini-state">
+              <i class="pi pi-info-circle text-2xl text-color-secondary"></i>
+              <p class="m-0 mt-2 text-color-secondary">
+                Aucune position reçue pour le moment.
+              </p>
+            </div>
+          }
+        </p-card>
+      </div>
+
+      <div class="col-12">
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="p-4 pb-0 flex align-items-center gap-3">
+              <div class="section-icon">
+                <i class="pi pi-history"></i>
+              </div>
+
+              <div>
+                <h3 class="m-0">Historique tracking</h3>
+                <p class="m-0 mt-1 text-sm text-color-secondary">
+                  Liste des événements de suivi du colis.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+          @if (history().length > 0) {
+            <p-table
+              [value]="history()"
+              [paginator]="true"
+              [rows]="5"
+              responsiveLayout="scroll"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Type</th>
+                  <th>Lieu</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <th>Date</th>
+                  <th>Description</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-event>
+                <tr>
+                  <td>
+                    <p-tag
+                      [value]="event.eventType"
+                      [severity]="event.eventType === 'DELAY_DETECTED' ? 'danger' : 'info'"
+                    />
+                  </td>
+
+                  <td>{{ event.locationLabel || '-' }}</td>
+                  <td>{{ event.latitude }}</td>
+                  <td>{{ event.longitude }}</td>
+                  <td>{{ event.eventTime | date:'short' }}</td>
+                  <td>{{ event.description || '-' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-history text-4xl text-color-secondary"></i>
+
+              <h3 class="m-0 mt-3">
+                Aucun événement tracking
+              </h3>
+
+              <p class="m-0 mt-2 text-color-secondary">
+                L’historique apparaîtra ici lorsque le livreur commencera la livraison.
+              </p>
+            </div>
+          }
+        </p-card>
+      </div>
+    </div>
+  }
+</div>

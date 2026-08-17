@@ -1,0 +1,87 @@
+<p-card class="h-full">
+  <ng-template pTemplate="header">
+    <div class="simple-card-header p-3">
+      <div class="section-icon">
+        <i class="pi pi-truck"></i>
+      </div>
+
+      <div>
+        <h3 class="m-0">Livraison en cours</h3>
+        <p class="m-0 mt-1 text-sm text-color-secondary">
+          Suivi du colis actuellement en route.
+        </p>
+      </div>
+    </div>
+  </ng-template>
+
+  @if (activeDelivery(); as delivery) {
+    <div class="flex flex-column gap-3">
+      <div class="data-line">
+        <span>Colis</span>
+        <strong>#{{ delivery.parcel.id }}</strong>
+      </div>
+
+      <div class="data-line">
+        <span>Commande</span>
+        <strong>#{{ delivery.parcel.orderId }}</strong>
+      </div>
+
+      <div class="data-line">
+        <span>Statut colis</span>
+        <p-tag value="En livraison" severity="info" />
+      </div>
+
+      <div class="data-line">
+        <span>Priorité</span>
+        <strong>{{ delivery.parcel.priority }}</strong>
+      </div>
+
+      <div class="data-line">
+        <span>Statut délai</span>
+        <p-tag
+          [value]="getDelayLabel()"
+          [severity]="getDelaySeverity()"
+        />
+      </div>
+
+      <div class="grid mt-2">
+        <div class="col-12 md:col-4">
+          <div class="data-box">
+            <span>Distance</span>
+            <strong>{{ formatDistance(delivery.estimate?.remainingDistanceMeters) }}</strong>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-4">
+          <div class="data-box">
+            <span>Durée</span>
+            <strong>{{ formatDuration(delivery.estimate?.remainingDurationSeconds) }}</strong>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-4">
+          <div class="data-box">
+            <span>Arrivée</span>
+            <strong>
+              {{ delivery.estimate?.estimatedArrival ? (delivery.estimate?.estimatedArrival | date:'shortTime') : '-' }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <p-button
+        label="Suivre le colis"
+        icon="pi pi-map-marker"
+        styleClass="w-full justify-content-center mt-2"
+        [routerLink]="['/client/tracking/parcels', delivery.parcel.id]"
+      />
+    </div>
+  } @else {
+    <div class="empty-mini-state">
+      <i class="pi pi-truck text-2xl text-color-secondary"></i>
+      <p class="m-0 mt-2 text-color-secondary">
+        Aucune livraison en cours actuellement.
+      </p>
+    </div>
+  }
+</p-card>

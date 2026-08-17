@@ -1,0 +1,297 @@
+<div class="client-parcels-page p-3 md:p-4">
+  <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="m-0 text-2xl md:text-3xl font-bold">
+        Mes colis
+      </h1>
+
+      <p class="m-0 mt-2 text-color-secondary">
+        Suivez l’état de vos colis et consultez les informations de livraison.
+      </p>
+    </div>
+
+    <div class="flex gap-2 flex-wrap">
+      @if (selectedOrderId()) {
+        <p-button
+          type="button"
+          label="Voir tous les colis"
+          icon="pi pi-filter-slash"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="clearOrderFilter()"
+        />
+      }
+
+      <p-button
+        type="button"
+        label="Actualiser"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        [loading]="loading()"
+        (onClick)="loadPage()"
+      />
+    </div>
+  </div>
+
+  @if (selectedOrderId()) {
+    <div class="mb-4 p-3 border-round border-1 surface-border surface-card flex align-items-center gap-2">
+      <i class="pi pi-filter text-primary"></i>
+      <span>
+        Filtre actif : colis de la commande
+        <strong>#{{ selectedOrderId() }}</strong>
+      </span>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="grid mb-4">
+      <div class="col-12 md:col-3">
+        <p-card>
+          <p-skeleton width="100%" height="90px" />
+        </p-card>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <p-card>
+          <p-skeleton width="100%" height="90px" />
+        </p-card>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <p-card>
+          <p-skeleton width="100%" height="90px" />
+        </p-card>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <p-card>
+          <p-skeleton width="100%" height="90px" />
+        </p-card>
+      </div>
+
+      <div class="col-12">
+        <p-card>
+          <p-skeleton width="100%" height="360px" />
+        </p-card>
+      </div>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="mb-4 p-3 border-round border-1 surface-border bg-red-50 text-red-700">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="grid mb-4">
+      <div class="col-12 md:col-3">
+        <p-card styleClass="kpi-card">
+          <div class="flex align-items-center justify-content-between gap-3">
+            <div>
+              <span class="text-color-secondary text-sm">Total colis</span>
+              <h2 class="m-0 mt-2">{{ totalParcels() }}</h2>
+            </div>
+
+            <div class="kpi-icon">
+              <i class="pi pi-box"></i>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <p-card styleClass="kpi-card">
+          <div class="flex align-items-center justify-content-between gap-3">
+            <div>
+              <span class="text-color-secondary text-sm">En préparation</span>
+              <h2 class="m-0 mt-2">{{ preparingParcels() }}</h2>
+            </div>
+
+            <div class="kpi-icon">
+              <i class="pi pi-clock"></i>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <p-card styleClass="kpi-card">
+          <div class="flex align-items-center justify-content-between gap-3">
+            <div>
+              <span class="text-color-secondary text-sm">En livraison</span>
+              <h2 class="m-0 mt-2">{{ outForDeliveryParcels() }}</h2>
+            </div>
+
+            <div class="kpi-icon">
+              <i class="pi pi-truck"></i>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <p-card styleClass="kpi-card">
+          <div class="flex align-items-center justify-content-between gap-3">
+            <div>
+              <span class="text-color-secondary text-sm">Livrés</span>
+              <h2 class="m-0 mt-2">{{ deliveredParcels() }}</h2>
+            </div>
+
+            <div class="kpi-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="p-4 pb-0 flex align-items-center justify-content-between gap-3 flex-wrap">
+          <div class="flex align-items-center gap-3">
+            <div class="section-icon">
+              <i class="pi pi-list"></i>
+            </div>
+
+            <div>
+              <h3 class="m-0">Liste de mes colis</h3>
+              <p class="m-0 mt-1 text-sm text-color-secondary">
+                Seuls les colis liés à vos commandes sont affichés.
+              </p>
+            </div>
+          </div>
+
+          @if (customer()) {
+            <p-tag
+              [value]="'Client #' + customer()?.id"
+              severity="info"
+            />
+          }
+        </div>
+      </ng-template>
+
+      @if (parcelRows().length > 0) {
+        <p-table
+          [value]="parcelRows()"
+          [paginator]="true"
+          [rows]="8"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Colis</th>
+              <th>Commande</th>
+              <th>Statut</th>
+              <th>Priorité</th>
+              <th>Poids</th>
+              <th>Date prévue</th>
+              <th>Options</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td>
+                <strong>#{{ row.parcel.id }}</strong>
+              </td>
+
+              <td>
+                <a
+                  class="text-primary font-medium no-underline"
+                  [routerLink]="['/client/orders', row.order.orderId]"
+                >
+                  #{{ row.order.orderId }}
+                </a>
+              </td>
+
+              <td>
+                <p-tag
+                  [value]="getStatusLabel(row.parcel.status)"
+                  [severity]="getStatusSeverity(row.parcel.status)"
+                />
+              </td>
+
+              <td>
+                <p-tag
+                  [value]="row.parcel.priority || '-'"
+                  [severity]="getPrioritySeverity(row.parcel.priority)"
+                />
+              </td>
+
+              <td>
+                {{ row.parcel.weight || 0 }} kg
+              </td>
+
+              <td>
+                {{ row.parcel.estimatedDelivery ? (row.parcel.estimatedDelivery | date:'short') : '-' }}
+              </td>
+
+              <td>
+                <div class="flex gap-2 flex-wrap">
+                  @if (row.parcel.fragile) {
+                    <p-tag value="Fragile" severity="warn" />
+                  }
+
+                  @if (row.parcel.insured) {
+                    <p-tag value="Assuré" severity="info" />
+                  }
+
+                  @if (!row.parcel.fragile && !row.parcel.insured) {
+                    <span class="text-color-secondary">-</span>
+                  }
+                </div>
+              </td>
+
+              <td>
+                <div class="flex justify-content-end gap-2">
+                  @if (canTrackLive(row.parcel)) {
+                    <p-button
+                      type="button"
+                      label="Suivre"
+                      icon="pi pi-map-marker"
+                      size="small"
+                      [routerLink]="['/client/tracking/parcels', row.parcel.id]"
+                    />
+                  } @else if (canViewTrackingHistory(row.parcel)) {
+                    <p-button
+                      type="button"
+                      label="Historique"
+                      icon="pi pi-history"
+                      size="small"
+                      severity="secondary"
+                      [outlined]="true"
+                      [routerLink]="['/client/tracking/parcels', row.parcel.id]"
+                    />
+                  } @else {
+                    <p-button
+                      type="button"
+                      label="Tracking bientôt disponible"
+                      icon="pi pi-clock"
+                      size="small"
+                      severity="secondary"
+                      [outlined]="true"
+                      [disabled]="true"
+                    />
+                  }
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      } @else {
+        <div class="empty-state">
+          <i class="pi pi-box text-4xl text-color-secondary"></i>
+
+          <h3 class="m-0 mt-3">
+            Aucun colis trouvé
+          </h3>
+
+          <p class="m-0 mt-2 text-color-secondary">
+            Vos colis apparaîtront ici lorsqu’une commande validée aura des colis associés.
+          </p>
+        </div>
+      }
+    </p-card>
+  }
+</div>

@@ -1,0 +1,259 @@
+<div
+  class="min-h-screen surface-ground"
+  [style.--sidebar-width]="sidebarCollapsed() ? '5rem' : '17rem'"
+>
+  <!-- Sidebar fixe sur ordinateur -->
+  <aside
+    class="desktop-sidebar hidden md:flex fixed top-0 left-0 flex-column h-screen surface-card border-right-1 surface-border z-5 transition-all transition-duration-200"
+  >
+    <ng-container
+      [ngTemplateOutlet]="sidebarContent"
+      [ngTemplateOutletContext]="{
+        collapsed: sidebarCollapsed(),
+        mobile: false
+      }"
+    />
+  </aside>
+
+  <!-- Contenu principal -->
+  <section
+    class="main-column flex flex-column min-h-screen transition-all transition-duration-200"
+  >
+    <!-- Topbar -->
+    <header
+      class="sticky top-0 z-4 flex align-items-center justify-content-between h-4rem px-3 md:px-4 surface-card border-bottom-1 surface-border"
+    >
+      <div class="flex align-items-center gap-2">
+        <!-- Bouton mobile -->
+        <button
+          pButton
+          type="button"
+          icon="pi pi-bars"
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          class="md:hidden"
+          aria-label="Ouvrir le menu"
+          (click)="openMobileSidebar()"
+        ></button>
+
+        <!-- Réduction de la sidebar desktop -->
+        <button
+          pButton
+          type="button"
+          [icon]="
+            sidebarCollapsed()
+              ? 'pi pi-angle-right'
+              : 'pi pi-angle-left'
+          "
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          class="hidden md:inline-flex"
+          aria-label="Réduire la sidebar"
+          (click)="toggleDesktopSidebar()"
+        ></button>
+
+        <div class="flex flex-column">
+          <span class="text-xs text-color-secondary">
+            SmartLog
+          </span>
+
+          <strong class="text-sm text-color">
+            Espace de travail
+          </strong>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex align-items-center gap-1">
+        <p-button
+          [icon]="isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+          severity="secondary"
+          size="small"
+          [text]="true"
+          [rounded]="true"
+          aria-label="Changer le thème"
+          (onClick)="toggleDarkMode()"
+        />
+
+        <p-button
+          icon="pi pi-bell"
+          severity="secondary"
+          size="small"
+          [text]="true"
+          [rounded]="true"
+          aria-label="Notifications"
+        />
+
+        <p-button
+          icon="pi pi-sign-out"
+          severity="danger"
+          size="small"
+          [text]="true"
+          [rounded]="true"
+          aria-label="Se déconnecter"
+          (onClick)="logout()"
+          [routerLink]="['auth']"
+        />
+      </div>
+    </header>
+
+    <!-- Pages enfants -->
+    <main class="flex-1 p-3 md:p-4 overflow-auto">
+      <router-outlet />
+    </main>
+  </section>
+</div>
+
+<!-- Sidebar mobile -->
+<p-drawer
+  [(visible)]="mobileSidebarVisible"
+  position="left"
+  header="SmartLog"
+  [style]="{ width: '18rem' }"
+>
+  <ng-container
+    [ngTemplateOutlet]="sidebarContent"
+    [ngTemplateOutletContext]="{
+      collapsed: false,
+      mobile: true
+    }"
+  />
+</p-drawer>
+
+<!-- Contenu partagé entre desktop et mobile -->
+<ng-template
+  #sidebarContent
+  let-collapsed="collapsed"
+  let-mobile="mobile"
+>
+  <div class="flex flex-column h-full p-2">
+    <!-- Logo -->
+    @if (!mobile) {
+      <div
+        class="flex align-items-center h-4rem mb-2 px-2"
+        [class.justify-content-center]="collapsed"
+      >
+        <a
+          routerLink="/customers"
+          class="flex align-items-center gap-2 w-full no-underline text-color"
+          [class.justify-content-center]="collapsed"
+          aria-label="Aller à l'accueil"
+        >
+          <img
+            ngSrc="/package-location-icon-free-vector.jpg"
+            alt="Logo SmartLog"
+            width="32"
+            height="32"
+            class="border-round flex-shrink-0"
+          />
+
+          @if (!collapsed) {
+            <div class="flex flex-column white-space-nowrap">
+              <strong class="text-sm text-color">
+                SmartLog
+              </strong>
+
+              <span class="text-xs text-color-secondary">
+                Workspace
+              </span>
+            </div>
+          }
+        </a>
+      </div>
+    }
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto overflow-x-hidden">
+      @for (group of navGroups; track group.label) {
+        <section class="mb-4">
+          @if (!collapsed) {
+            <p
+              class="px-2 mt-0 mb-2 text-xs font-semibold uppercase text-color-secondary"
+            >
+              {{ group.label }}
+            </p>
+          }
+
+          <div class="flex flex-column gap-1">
+            @for (item of group.items; track item.route) {
+              <a
+                class="flex align-items-center gap-2 py-2 px-2 border-round no-underline text-color-secondary hover:surface-hover transition-colors transition-duration-150"
+                [class.justify-content-center]="collapsed"
+                [class.px-0]="collapsed"
+                [routerLink]="item.route"
+                [routerLinkActive]="[
+                  'surface-100',
+                  'text-primary',
+                  'font-semibold',
+                  'border-left-3',
+                  'border-primary'
+                ]"
+                [routerLinkActiveOptions]="{
+                  exact: item.exact ?? false
+                }"
+                ariaCurrentWhenActive="page"
+                [title]="collapsed ? item.label : ''"
+                (click)="mobile && closeMobileSidebar()"
+              >
+                <i
+                  [class]="item.icon + ' text-lg flex-shrink-0'"
+                ></i>
+
+                @if (!collapsed) {
+                  <span class="flex-1 text-sm white-space-nowrap">
+                    {{ item.label }}
+                  </span>
+
+                  @if (item.badge) {
+                    <span
+                      class="flex align-items-center justify-content-center px-2 py-1 border-round-3xl surface-200 text-color-secondary text-xs font-semibold"
+                    >
+                      {{ item.badge }}
+                    </span>
+                  }
+                }
+              </a>
+            }
+          </div>
+        </section>
+      }
+    </nav>
+
+    <!-- Profil utilisateur -->
+    <div class="border-top-1 surface-border pt-2">
+      <button
+        type="button"
+        class="flex align-items-center gap-2 w-full p-2 border-none border-round surface-card hover:surface-hover text-color cursor-pointer text-left"
+        [class.justify-content-center]="collapsed"
+        [title]="collapsed ? 'Adam Zaghi' : ''"
+      >
+        <p-avatar
+          [label]="getUserInitials()"
+          shape="circle"
+          size="normal"
+          class="flex-shrink-0"
+        />
+
+        @if (!collapsed) {
+          <span class="flex flex-column flex-1 overflow-hidden">
+            <strong
+              class="text-sm text-color white-space-nowrap overflow-hidden text-overflow-ellipsis"
+            >
+            {{ authService.currentUser()?.email }}
+            </strong>
+
+            <small
+              class="text-xs text-color-secondary white-space-nowrap overflow-hidden text-overflow-ellipsis"
+            >
+              {{authService.currentUser()?.role}}
+            </small>
+          </span>
+
+          <i class="pi pi-ellipsis-v text-color-secondary text-sm"></i>
+        }
+      </button>
+    </div>
+  </div>
+</ng-template>
