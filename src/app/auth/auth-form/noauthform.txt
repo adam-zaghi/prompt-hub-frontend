@@ -1,0 +1,66 @@
+/**
+import { Component, inject, signal } from '@angular/core'
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { Card } from 'primeng/card'
+import { Button } from 'primeng/button'
+import { Password } from 'primeng/password'
+import { InputText } from 'primeng/inputtext'
+import { AuthService } from '../auth-service'
+import { DataUser } from '../DataUser'
+import { Router } from '@angular/router'
+
+@Component({
+  selector: 'app-auth-form',
+  imports: [ReactiveFormsModule, Card, Button, Password, InputText],
+  templateUrl: './auth-form.html',
+  styleUrl: './auth-form.scss',
+})
+export class AuthForm {
+  //injecter authservice
+  authService = inject(AuthService)
+  routeur = inject(Router)
+
+  //swap entre login et register
+  mode = signal<'login' | 'register'>('login')
+  toggleMode() {
+    this.mode.update((value) => (value === 'login' ? 'register' : 'login'))
+  }
+
+  submit() {
+    this.form.markAllAsTouched()
+    if (this.form.invalid) {
+      return
+      //pour pas continuer
+    }
+
+    //on recup les donnée depuis le form controle
+    const data = this.form.getRawValue()
+
+    if (this.mode() === 'register') {
+      // this.register(data)
+    } else {
+      this.login(data.username, data.password)
+    }
+  }
+
+  login(username: string, password: string) {
+    this.authService.login(username, password).subscribe(() => void this.routeur.navigate(['/']))
+  }
+  register(data: DataUser) {
+    this.authService.register(data).subscribe(() => void this.routeur.navigate(['/']))
+  }
+  //void pour ne pas gerer les promess de navigate
+
+  //le form
+  form = new FormGroup({
+    username: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(4)],
+    }),
+  })
+}
+/
