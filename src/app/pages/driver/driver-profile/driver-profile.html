@@ -1,0 +1,248 @@
+<div class="driver-profile-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Mon profil</h1>
+      <p>
+        Consultez vos informations personnelles et votre disponibilité.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <p-tag
+        [value]="getRoleLabel()"
+        severity="info"
+      />
+
+      <p-button
+        label="Actualiser"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        [loading]="loading()"
+        (onClick)="loadProfile()"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="grid">
+      <div class="col-12 lg:col-4">
+        <p-card>
+          <p-skeleton width="100%" height="260px" />
+        </p-card>
+      </div>
+
+      <div class="col-12 lg:col-8">
+        <p-card>
+          <p-skeleton width="100%" height="360px" />
+        </p-card>
+      </div>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="app-alert app-alert-error">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="app-alert app-alert-success">
+        <i class="pi pi-check-circle"></i>
+        <span>{{ successMessage() }}</span>
+      </div>
+    }
+
+    <div class="grid">
+      <!-- Résumé profil -->
+      <div class="col-12 lg:col-4">
+        <p-card styleClass="h-full profile-summary-card">
+          <div class="profile-summary-content">
+            <p-avatar
+              [label]="initials()"
+              shape="circle"
+              size="xlarge"
+              styleClass="profile-avatar"
+            />
+
+            <div class="profile-main-info">
+              <h2>{{ fullName() }}</h2>
+
+              <p>
+                {{ agent()?.email || user()?.email }}
+              </p>
+            </div>
+
+            <div class="profile-tags">
+              <p-tag
+                value="Livreur SmartLog"
+                severity="success"
+              />
+
+              <p-tag
+                [value]="getAvailabilityLabel()"
+                [severity]="getAvailabilitySeverity()"
+              />
+            </div>
+
+            <p-divider />
+
+            <div class="summary-list">
+              <div class="summary-line">
+                <span>Agent ID</span>
+                <strong>#{{ agent()?.id || '-' }}</strong>
+              </div>
+
+              <div class="summary-line">
+                <span>User ID</span>
+                <strong>#{{ agent()?.userId || '-' }}</strong>
+              </div>
+
+              <div class="summary-line">
+                <span>Téléphone</span>
+                <strong>{{ agent()?.phone || '-' }}</strong>
+              </div>
+
+              <div class="summary-line">
+                <span>Ville actuelle</span>
+                <strong>{{ agent()?.currentCity || '-' }}</strong>
+              </div>
+
+              <div class="summary-line">
+                <span>Créé le</span>
+                <strong>
+                  {{ agent()?.createdAt ? (agent()?.createdAt | date:'short') : '-' }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Détails profil -->
+      <div class="col-12 lg:col-8">
+        <p-card styleClass="mb-4">
+          <ng-template pTemplate="header">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-user"></i>
+              </div>
+
+              <div>
+                <h3>Informations personnelles</h3>
+                <p>
+                  Informations liées à votre profil livreur.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+          <div class="info-grid">
+            <div class="info-box">
+              <span>Prénom</span>
+              <strong>{{ agent()?.firstName || '-' }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span>Nom</span>
+              <strong>{{ agent()?.lastName || '-' }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span>Email</span>
+              <strong>{{ agent()?.email || '-' }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span>Téléphone</span>
+              <strong>{{ agent()?.phone || '-' }}</strong>
+            </div>
+          </div>
+        </p-card>
+
+        <p-card styleClass="mb-4">
+          <ng-template pTemplate="header">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-truck"></i>
+              </div>
+
+              <div>
+                <h3>Informations livreur</h3>
+                <p>
+                  Données opérationnelles utilisées pour les affectations.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+          <div class="info-grid">
+            <div class="info-box">
+              <span>Disponibilité</span>
+
+              <strong>
+                <p-tag
+                  [value]="getAvailabilityLabel()"
+                  [severity]="getAvailabilitySeverity()"
+                />
+              </strong>
+            </div>
+
+            <div class="info-box">
+              <span>Ville actuelle</span>
+              <strong>{{ agent()?.currentCity || '-' }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span>Date de création</span>
+              <strong>
+                {{ agent()?.createdAt ? (agent()?.createdAt | date:'short') : '-' }}
+              </strong>
+            </div>
+
+            <div class="info-box">
+              <span>Dernière mise à jour</span>
+              <strong>
+                {{ agent()?.updatedAt ? (agent()?.updatedAt | date:'short') : '-' }}
+              </strong>
+            </div>
+          </div>
+        </p-card>
+
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-bolt"></i>
+              </div>
+
+              <div>
+                <h3>Actions rapides</h3>
+                <p>
+                  Accédez rapidement à vos livraisons et à votre activité.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+          <div class="quick-actions">
+            <p-button
+              label="Mes livraisons"
+              icon="pi pi-list"
+              routerLink="/driver/deliveries"
+            />
+
+            <p-button
+              label="Tableau de bord"
+              icon="pi pi-home"
+              severity="secondary"
+              [outlined]="true"
+              routerLink="/driver/dashboard"
+            />
+          </div>
+        </p-card>
+      </div>
+    </div>
+  }
+</div>

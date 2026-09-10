@@ -1,0 +1,274 @@
+<div class="driver-dashboard-page">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="page-title-block">
+      <div class="page-icon">
+        <i class="pi pi-home"></i>
+      </div>
+
+      <div>
+        <span class="page-eyebrow">Espace livreur</span>
+        <h1>Tableau de bord</h1>
+        <p>
+          Suivez vos livraisons, votre disponibilité et vos actions principales.
+        </p>
+      </div>
+    </div>
+
+    <p-button
+      label="Actualiser"
+      icon="pi pi-refresh"
+      severity="secondary"
+      [outlined]="true"
+      [loading]="loading()"
+      (onClick)="loadDashboard()"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="loading-grid">
+      <p-skeleton height="150px" />
+      <p-skeleton height="150px" />
+      <p-skeleton height="120px" />
+      <p-skeleton height="120px" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="app-alert app-alert-error">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <!-- Top overview -->
+    <div class="overview-grid">
+      <!-- Profil livreur -->
+      <section class="driver-card profile-card">
+        <div class="profile-main">
+          <div class="driver-avatar">
+            {{ getInitials() }}
+          </div>
+
+          <div>
+            <span class="card-eyebrow">Livreur connecté</span>
+
+            <h2>
+              {{ agent()?.firstName }} {{ agent()?.lastName }}
+            </h2>
+
+            <p>
+              <i class="pi pi-envelope"></i>
+              {{ agent()?.email }}
+            </p>
+
+            <p>
+              <i class="pi pi-map-marker"></i>
+              {{ agent()?.currentCity || 'Ville non définie' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-footer">
+          <p-tag
+            [value]="agent()?.available ? 'Disponible' : 'Occupé'"
+            [severity]="agent()?.available ? 'success' : 'warn'"
+          />
+
+          <span>Livreur #{{ agent()?.id }}</span>
+        </div>
+      </section>
+
+      <!-- Livraison active -->
+      <section class="driver-card active-card">
+        <div class="card-header">
+          <div>
+            <span class="card-eyebrow">Priorité</span>
+            <h3>Livraison active</h3>
+          </div>
+
+          <div class="header-icon">
+            <i class="pi pi-send"></i>
+          </div>
+        </div>
+
+        @if (activeDelivery(); as active) {
+          <div class="active-content">
+            <div>
+              <strong>Colis #{{ active.parcelId }}</strong>
+              <span>Livraison #{{ active.id }}</span>
+            </div>
+
+            <p-tag
+              [value]="getStatusLabel(active.status)"
+              [severity]="getStatusSeverity(active.status)"
+            />
+
+            <p-button
+              label="Continuer"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              styleClass="w-full justify-content-center"
+              [routerLink]="['/driver/deliveries', active.id]"
+            />
+          </div>
+        } @else {
+          <div class="empty-mini-state">
+            <i class="pi pi-check-circle"></i>
+            <span>Aucune livraison en cours.</span>
+          </div>
+        }
+      </section>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <section class="kpi-card">
+        <div>
+          <span>Total</span>
+          <strong>{{ totalAssignments() }}</strong>
+          <small>Livraisons reçues</small>
+        </div>
+
+        <div class="kpi-icon">
+          <i class="pi pi-truck"></i>
+        </div>
+      </section>
+
+      <section class="kpi-card">
+        <div>
+          <span>Assignées</span>
+          <strong>{{ assignedCount() }}</strong>
+          <small>À démarrer</small>
+        </div>
+
+        <div class="kpi-icon">
+          <i class="pi pi-inbox"></i>
+        </div>
+      </section>
+
+      <section class="kpi-card">
+        <div>
+          <span>En cours</span>
+          <strong>{{ inProgressCount() }}</strong>
+          <small>Livraisons actives</small>
+        </div>
+
+        <div class="kpi-icon">
+          <i class="pi pi-send"></i>
+        </div>
+      </section>
+
+      <section class="kpi-card">
+        <div>
+          <span>Livrées</span>
+          <strong>{{ deliveredCount() }}</strong>
+          <small>Taux {{ completionRate() }}%</small>
+        </div>
+
+        <div class="kpi-icon">
+          <i class="pi pi-check-circle"></i>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-grid">
+      <!-- Prochaine livraison -->
+      <section class="driver-card">
+        <div class="card-header">
+          <div>
+            <h3>Prochaine livraison</h3>
+            <p>La prochaine livraison en attente de démarrage.</p>
+          </div>
+
+          <div class="header-icon">
+            <i class="pi pi-clock"></i>
+          </div>
+        </div>
+
+        @if (nextDelivery(); as next) {
+          <div class="next-delivery">
+            <div class="delivery-line">
+              <span>Livraison</span>
+              <strong>#{{ next.id }}</strong>
+            </div>
+
+            <div class="delivery-line">
+              <span>Colis</span>
+              <strong>#{{ next.parcelId }}</strong>
+            </div>
+
+            <div class="delivery-line">
+              <span>Affectée le</span>
+              <strong>
+                {{ next.assignedAt ? (next.assignedAt | date:'short') : '-' }}
+              </strong>
+            </div>
+
+            <p-button
+              label="Voir détails"
+              icon="pi pi-eye"
+              severity="secondary"
+              [outlined]="true"
+              styleClass="w-full justify-content-center"
+              [routerLink]="['/driver/deliveries', next.id]"
+            />
+          </div>
+        } @else {
+          <div class="empty-mini-state">
+            <i class="pi pi-inbox"></i>
+            <span>Aucune livraison assignée.</span>
+          </div>
+        }
+      </section>
+
+      <!-- Activité récente -->
+      <section class="driver-card">
+        <div class="card-header">
+          <div>
+            <h3>Activité récente</h3>
+            <p>Dernières livraisons affectées à votre profil.</p>
+          </div>
+
+          <p-button
+            label="Voir tout"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            [text]="true"
+            routerLink="/driver/deliveries"
+          />
+        </div>
+
+        <div class="recent-list">
+          @for (delivery of recentDeliveries(); track delivery.id) {
+            <a
+              class="recent-item"
+              [routerLink]="['/driver/deliveries', delivery.id]"
+            >
+              <div class="recent-icon">
+                <i class="pi pi-box"></i>
+              </div>
+
+              <div class="recent-content">
+                <strong>Colis #{{ delivery.parcelId }}</strong>
+                <span>
+                  Livraison #{{ delivery.id }}
+                </span>
+              </div>
+
+              <p-tag
+                [value]="getStatusLabel(delivery.status)"
+                [severity]="getStatusSeverity(delivery.status)"
+              />
+            </a>
+          } @empty {
+            <div class="empty-mini-state">
+              <i class="pi pi-history"></i>
+              <span>Aucune activité récente.</span>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</div>

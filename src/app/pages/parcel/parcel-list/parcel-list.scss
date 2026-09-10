@@ -1,0 +1,398 @@
+:host {
+  display: block;
+}
+
+.parcels-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* =========================
+   Header
+========================= */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.page-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.page-title-block h2 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.page-title-block p {
+  margin: 0.3rem 0 0;
+  color: var(--text-color-secondary);
+  font-size: 0.95rem;
+}
+
+/* =========================
+   Table card
+========================= */
+
+.table-card {
+  border-radius: 1.25rem;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   Prime table
+========================= */
+
+:host ::ng-deep .parcels-table {
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+:host ::ng-deep .parcels-table .p-datatable-header {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+  padding: 1rem;
+}
+
+:host ::ng-deep .parcels-table .p-datatable-thead > tr > th {
+  background: color-mix(in srgb, var(--surface-ground) 70%, var(--surface-card));
+  color: var(--text-color-secondary);
+  border-color: var(--surface-border);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.9rem 1rem;
+}
+
+:host ::ng-deep .parcels-table .p-datatable-tbody > tr {
+  background: var(--surface-card);
+  color: var(--text-color);
+  transition: background 0.15s ease;
+}
+
+:host ::ng-deep .parcels-table .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover);
+}
+
+:host ::ng-deep .parcels-table .p-datatable-tbody > tr > td {
+  border-color: var(--surface-border);
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .parcels-table .p-paginator {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+}
+
+/* =========================
+   Toolbar
+========================= */
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.table-toolbar h3 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.table-toolbar span {
+  color: var(--text-color-secondary);
+  font-size: 0.88rem;
+}
+
+.search-box {
+  width: 18rem;
+}
+
+.search-box input {
+  width: 100%;
+  height: 2.65rem;
+  border-radius: 0.85rem;
+}
+
+/* =========================
+   Cells
+========================= */
+
+.parcel-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.parcel-icon {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.parcel-id {
+  color: var(--text-color);
+  font-weight: 800;
+}
+
+.parcel-cell small {
+  color: var(--text-color-secondary);
+}
+
+.order-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.order-link i {
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+.order-link:hover,
+.order-link:hover i {
+  color: var(--primary-color);
+}
+
+.weight-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--surface-ground) 70%, transparent);
+  border: 1px solid var(--surface-border);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.weight-cell i {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.dimensions-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dimensions-cell span {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.dimensions-cell small {
+  color: var(--text-color-secondary);
+}
+
+.options-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.standard-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+.standard-option i {
+  color: var(--primary-color);
+}
+
+.date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.date-cell span {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.date-cell small {
+  color: var(--text-color-secondary);
+}
+
+.not-defined {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+.action-cell {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+:host ::ng-deep .status-tag,
+:host ::ng-deep .priority-tag {
+  font-weight: 700;
+}
+
+/* =========================
+   Empty state
+========================= */
+
+.empty-state {
+  min-height: 18rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1.3rem;
+  background: color-mix(in srgb, var(--primary-color) 13%, transparent);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.empty-state h3 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--text-color-secondary);
+}
+
+/* =========================
+   Dark mode table contrast
+========================= */
+
+:host-context(.app-dark) {
+  .table-card {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+  }
+
+  ::ng-deep .parcels-table .p-datatable-header {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  ::ng-deep .parcels-table .p-datatable-wrapper {
+    background: #1f2937;
+  }
+
+  ::ng-deep .parcels-table .p-datatable-table {
+    background: #1f2937;
+  }
+
+  ::ng-deep .parcels-table .p-datatable-thead > tr > th {
+    background: #273449;
+    color: var(--text-color);
+    border-color: #374151;
+  }
+
+  ::ng-deep .parcels-table .p-datatable-tbody > tr {
+    background: #1f2937;
+    color: var(--text-color);
+  }
+
+  ::ng-deep .parcels-table .p-datatable-tbody > tr:hover {
+    background: #2b3a50;
+  }
+
+  ::ng-deep .parcels-table .p-datatable-tbody > tr > td {
+    border-color: #374151;
+  }
+
+  ::ng-deep .parcels-table .p-paginator {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .weight-cell {
+    background: #273449;
+    border-color: #3f4f66;
+  }
+
+  .parcel-icon {
+    background: color-mix(in srgb, var(--primary-color) 22%, #1f2937);
+  }
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media screen and (max-width: 768px) {
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .table-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .page-title-block h2 {
+    font-size: 1.35rem;
+  }
+}

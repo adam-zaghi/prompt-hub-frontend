@@ -38,6 +38,26 @@ interface NavGroup {
 })
 export class AppLayoutComponent {
   authService = inject(AuthService)
+  get homeLink(): string {
+    const role = this.authService.currentUser()?.role
+
+    switch (role) {
+      case 'CUSTOMER':
+        return '/client/dashboard'
+
+      case 'DELIVERY_AGENT':
+        return '/driver/dashboard'
+
+      case 'ADMIN':
+        return '/dashboard'
+
+      case 'LOGISTICS_MANAGER':
+        return '/dashboard'
+
+      default:
+        return '/auth'
+    }
+  }
   /**
    * Contrôle le mode réduit de la sidebar sur ordinateur.
    */
@@ -76,11 +96,6 @@ export class AppLayoutComponent {
           icon: 'pi pi-send',
           route: '/driver/current-delivery',
         },
-        {
-          label: 'Historique',
-          icon: 'pi pi-history',
-          route: '/driver/history',
-        },
       ],
     },
     {
@@ -90,11 +105,6 @@ export class AppLayoutComponent {
           label: 'Mon profil',
           icon: 'pi pi-user',
           route: '/driver/profile',
-        },
-        {
-          label: 'Paramètres',
-          icon: 'pi pi-cog',
-          route: '/driver/settings',
         },
       ],
     },
@@ -113,16 +123,13 @@ export class AppLayoutComponent {
           label: 'Mes commandes',
           icon: 'pi pi-shopping-cart',
           route: '/client/orders',
+          exact: true,
         },
         {
           label: 'Mes colis',
           icon: 'pi pi-box',
           route: '/client/parcels',
-        },
-        {
-          label: 'Suivi colis',
-          icon: 'pi pi-map-marker',
-          route: '/client/tracking',
+          exact: true,
         },
       ],
     },
@@ -133,16 +140,13 @@ export class AppLayoutComponent {
           label: 'ajouter adresse',
           icon: 'pi pi-map',
           route: '/client/addresses',
+          exact: true,
         },
         {
           label: 'Mon profil',
           icon: 'pi pi-user',
           route: '/client/profile',
-        },
-        {
-          label: 'Paramètres',
-          icon: 'pi pi-cog',
-          route: '/settings',
+          exact: true,
         },
       ],
     },
@@ -155,11 +159,13 @@ export class AppLayoutComponent {
           label: 'Liste des clients',
           icon: 'pi pi-users',
           route: '/customers',
+          exact: true,
         },
         {
           label: 'Ajouter client',
           icon: 'pi pi-user-plus',
           route: '/customers/create',
+          exact: true,
         },
       ],
     },
@@ -170,11 +176,13 @@ export class AppLayoutComponent {
           label: 'Liste des commandes',
           icon: 'pi pi-shopping-cart',
           route: '/orders',
+          exact: true,
         },
         {
           label: 'Créer commande',
           icon: 'pi pi-plus-circle',
           route: '/orders/create',
+          exact: true,
         },
       ],
     },
@@ -185,6 +193,7 @@ export class AppLayoutComponent {
           label: 'Liste des colis',
           icon: 'pi pi-box',
           route: '/parcels',
+          exact: true,
         },
       ],
     },
@@ -195,30 +204,24 @@ export class AppLayoutComponent {
           label: 'Livreurs',
           icon: 'pi pi-id-card',
           route: '/delivery-agents',
+          exact: true,
         },
         {
           label: 'Ajouter livreur',
           icon: 'pi pi-user-plus',
           route: '/delivery-agents/create',
+          exact: true,
         },
         {
           label: 'Livraisons',
           icon: 'pi pi-truck',
           route: '/deliveries',
-        },
-      ],
-    },
-    {
-      label: 'Compte',
-      items: [
-        {
-          label: 'Paramètres',
-          icon: 'pi pi-cog',
-          route: '/settings',
+          exact: true,
         },
       ],
     },
   ]
+
   get navGroups(): NavGroup[] {
     const role = this.authService.currentUser()?.role
 

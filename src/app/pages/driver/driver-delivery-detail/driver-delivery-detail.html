@@ -60,37 +60,180 @@
     }
 
     @if (assignment(); as a) {
-      <div class="grid">
+      <div class="detail-layout">
+        <!-- =========================
+             TOP : MAP + ACTIONS / ETA
+             ========================= -->
+        <div class="top-grid">
+          <!-- Carte -->
+          <section class="detail-card map-panel">
+            <app-driver-delivery-map
+              [destination]="destination()"
+              [driverPosition]="driverPosition()"
+              [statusLabel]="getStatusLabel(a.status)"
+              [statusSeverity]="getStatusSeverity(a.status)"
+            />
+          </section>
 
-
-            <div class="col-12 lg:col-7">
-              <app-driver-delivery-map
-                [destination]="destination()"
-                [driverPosition]="driverPosition()"
-                [statusLabel]="getStatusLabel(a.status)"
-                [statusSeverity]="getStatusSeverity(a.status)"
-              />
-            </div>
-
-
-        <div class="col-12 lg:col-5">
-          <p-card styleClass="mb-4">
-            <ng-template pTemplate="header">
+          <!-- Colonne droite compacte -->
+          <div class="side-panel">
+            <!-- Actions -->
+            <section class="detail-card actions-card">
               <div class="simple-card-header">
                 <div class="section-icon">
-                  <i class="pi pi-truck"></i>
+                  <i class="pi pi-bolt"></i>
                 </div>
 
                 <div>
-                  <h3 class="m-0">Informations livraison</h3>
-                  <p class="m-0 mt-1 text-sm text-color-secondary">
-                    État actuel de votre livraison.
-                  </p>
+                  <h3>Actions rapides</h3>
+                  <p>Actions disponibles selon le statut de la livraison.</p>
                 </div>
               </div>
-            </ng-template>
 
-            <div class="flex flex-column gap-3">
+              <div class="actions-list">
+                @if (canPreviewPosition()) {
+                  <p-button
+                    type="button"
+                    label="Afficher ma position"
+                    icon="pi pi-map"
+                    severity="secondary"
+                    [outlined]="true"
+                    [loading]="positionLoading()"
+                    styleClass="w-full justify-content-center"
+                    (onClick)="showMyPositionOnMap()"
+                  />
+                }
+
+                @if (canStart()) {
+                  <p-button
+                    type="button"
+                    label="Démarrer la livraison"
+                    icon="pi pi-play"
+                    [loading]="actionLoading()"
+                    styleClass="w-full justify-content-center"
+                    (onClick)="startDelivery()"
+                  />
+                }
+
+                @if (canSendPosition()) {
+                  <p-button
+                    type="button"
+                    label="Envoyer ma position actuelle"
+                    icon="pi pi-map-marker"
+                    severity="info"
+                    [loading]="positionLoading()"
+                    styleClass="w-full justify-content-center"
+                    (onClick)="sendCurrentPosition()"
+                  />
+                }
+
+                @if (canComplete()) {
+                  <p-button
+                    type="button"
+                    label="Terminer la livraison"
+                    icon="pi pi-check"
+                    severity="success"
+                    [loading]="actionLoading()"
+                    styleClass="w-full justify-content-center"
+                    (onClick)="completeDelivery()"
+                  />
+                }
+
+                @if (canFail()) {
+                  <p-button
+                    type="button"
+                    label="Signaler un problème"
+                    icon="pi pi-exclamation-triangle"
+                    severity="danger"
+                    [outlined]="true"
+                    [loading]="actionLoading()"
+                    styleClass="w-full justify-content-center"
+                    (onClick)="failDelivery()"
+                  />
+                }
+
+                @if (!canStart() && !canSendPosition() && !canComplete() && !canFail()) {
+                  <div class="empty-mini-state">
+                    <i class="pi pi-lock text-2xl text-color-secondary"></i>
+                    <p>Cette livraison est en lecture seule.</p>
+                  </div>
+                }
+              </div>
+            </section>
+
+            <!-- Estimation -->
+            <section class="detail-card eta-card">
+              <div class="simple-card-header">
+                <div class="section-icon">
+                  <i class="pi pi-clock"></i>
+                </div>
+
+                <div>
+                  <h3>Estimation du trajet</h3>
+                  <p>Distance, durée restante et heure d’arrivée.</p>
+                </div>
+              </div>
+
+              @if (estimate(); as eta) {
+                <div class="data-list">
+                  <div class="data-line">
+                    <span>Statut délai</span>
+                    <p-tag
+                      [value]="getDelayLabel()"
+                      [severity]="getDelaySeverity()"
+                    />
+                  </div>
+
+                  <div class="data-line">
+                    <span>Distance restante</span>
+                    <strong>{{ formatDistance(eta.remainingDistanceMeters) }}</strong>
+                  </div>
+
+                  <div class="data-line">
+                    <span>Durée restante</span>
+                    <strong>{{ formatDuration(eta.remainingDurationSeconds) }}</strong>
+                  </div>
+
+                  <div class="data-line">
+                    <span>Arrivée estimée</span>
+                    <strong>
+                      {{ eta.estimatedArrival ? (eta.estimatedArrival | date:'shortTime') : '-' }}
+                    </strong>
+                  </div>
+
+                  <div class="data-line">
+                    <span>Retard estimé</span>
+                    <strong>{{ eta.delayInMinutes || 0 }} min</strong>
+                  </div>
+                </div>
+              } @else {
+                <div class="empty-mini-state">
+                  <i class="pi pi-clock text-2xl text-color-secondary"></i>
+                  <p>L’estimation sera calculée après l’envoi de votre position.</p>
+                </div>
+              }
+            </section>
+          </div>
+        </div>
+
+        <!-- =========================
+             MIDDLE : INFORMATIONS
+             ========================= -->
+        <div class="info-grid">
+          <!-- Informations livraison -->
+          <section class="detail-card">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-truck"></i>
+              </div>
+
+              <div>
+                <h3>Informations livraison</h3>
+                <p>État actuel de votre livraison.</p>
+              </div>
+            </div>
+
+            <div class="data-list">
               <div class="data-line">
                 <span>Livraison</span>
                 <strong>#{{ a.id }}</strong>
@@ -123,33 +266,25 @@
                 <span>Terminée le</span>
                 <strong>{{ a.completedAt ? (a.completedAt | date:'short') : '-' }}</strong>
               </div>
+            </div>
+          </section>
 
-              <div class="data-line">
-                <span>Notes</span>
-                <strong>{{ a.notes || '-' }}</strong>
+          <!-- Destination -->
+          <section class="detail-card">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-map"></i>
+              </div>
+
+              <div>
+                <h3>Destination client</h3>
+                <p>Adresse où le colis doit être livré.</p>
               </div>
             </div>
-          </p-card>
-
-          <p-card styleClass="mb-4">
-            <ng-template pTemplate="header">
-              <div class="simple-card-header">
-                <div class="section-icon">
-                  <i class="pi pi-map"></i>
-                </div>
-
-                <div>
-                  <h3 class="m-0">Destination client</h3>
-                  <p class="m-0 mt-1 text-sm text-color-secondary">
-                    Adresse où le colis doit être livré.
-                  </p>
-                </div>
-              </div>
-            </ng-template>
 
             @if (destination(); as dest) {
-              <div class="flex flex-column gap-3">
-                <div class="data-line">
+              <div class="data-list">
+                <div class="data-line address-line">
                   <span>Adresse</span>
                   <strong>{{ dest.fullAddress || '-' }}</strong>
                 </div>
@@ -167,92 +302,26 @@
             } @else {
               <div class="empty-mini-state">
                 <i class="pi pi-info-circle text-2xl text-color-secondary"></i>
-                <p class="m-0 mt-2 text-color-secondary">
-                  Destination non disponible pour ce colis.
-                </p>
+                <p>Destination non disponible pour ce colis.</p>
               </div>
             }
-          </p-card>
-          <p-card styleClass="mb-4">
-            <ng-template pTemplate="header">
-              <div class="simple-card-header">
-                <div class="section-icon">
-                  <i class="pi pi-clock"></i>
-                </div>
+          </section>
 
-                <div>
-                  <h3 class="m-0">Estimation du trajet</h3>
-                  <p class="m-0 mt-1 text-sm text-color-secondary">
-                    Distance restante, durée estimée et heure d’arrivée.
-                  </p>
-                </div>
+          <!-- Informations colis -->
+          <section class="detail-card">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-box"></i>
               </div>
-            </ng-template>
 
-            @if (estimate(); as eta) {
-              <div class="flex flex-column gap-3">
-                <div class="data-line">
-                  <span>Statut délai</span>
-                  <p-tag
-                    [value]="getDelayLabel()"
-                    [severity]="getDelaySeverity()"
-                  />
-                </div>
-
-                <div class="data-line">
-                  <span>Distance restante</span>
-                  <strong>{{ formatDistance(eta.remainingDistanceMeters) }}</strong>
-                </div>
-
-                <div class="data-line">
-                  <span>Durée restante</span>
-                  <strong>{{ formatDuration(eta.remainingDurationSeconds) }}</strong>
-                </div>
-
-                <div class="data-line">
-                  <span>Arrivée estimée</span>
-                  <strong>
-                    {{ eta.estimatedArrival ? (eta.estimatedArrival | date:'shortTime') : '-' }}
-                  </strong>
-                </div>
-
-                <div class="data-line">
-                  <span>Retard estimé</span>
-                  <strong>{{ eta.delayInMinutes || 0 }} min</strong>
-                </div>
-
-                <div class="data-line">
-                  <span>Dernier calcul</span>
-                  <strong>{{ eta.updatedAt ? (eta.updatedAt | date:'shortTime') : '-' }}</strong>
-                </div>
+              <div>
+                <h3>Informations colis</h3>
+                <p>Colis lié à cette livraison.</p>
               </div>
-            } @else {
-              <div class="empty-mini-state">
-                <i class="pi pi-clock text-2xl text-color-secondary"></i>
-                <p class="m-0 mt-2 text-color-secondary">
-                  L’estimation sera calculée après l’envoi de votre position.
-                </p>
-              </div>
-            }
-          </p-card>
-          <p-card styleClass="mb-4">
-            <ng-template pTemplate="header">
-              <div class="simple-card-header">
-                <div class="section-icon">
-                  <i class="pi pi-box"></i>
-                </div>
-
-                <div>
-                  <h3 class="m-0">Informations colis</h3>
-                  <p class="m-0 mt-1 text-sm text-color-secondary">
-                    Colis lié à cette livraison.
-                  </p>
-                </div>
-              </div>
-            </ng-template>
+            </div>
 
             @if (a.parcel) {
-              <div class="flex flex-column gap-3">
+              <div class="data-list">
                 <div class="data-line">
                   <span>Colis</span>
                   <strong>#{{ a.parcel.id }}</strong>
@@ -288,214 +357,96 @@
             } @else {
               <div class="empty-mini-state">
                 <i class="pi pi-info-circle text-2xl text-color-secondary"></i>
-                <p class="m-0 mt-2 text-color-secondary">
-                  Détails du colis non chargés. Colis #{{ a.parcelId }}
-                </p>
+                <p>Détails du colis non chargés. Colis #{{ a.parcelId }}</p>
               </div>
             }
-          </p-card>
-
-          <p-card>
-            <ng-template pTemplate="header">
-              <div class="simple-card-header">
-                <div class="section-icon">
-                  <i class="pi pi-bolt"></i>
-                </div>
-
-                <div>
-                  <h3 class="m-0">Actions</h3>
-                  <p class="m-0 mt-1 text-sm text-color-secondary">
-                    Actions disponibles selon le statut.
-                  </p>
-                </div>
-              </div>
-            </ng-template>
-
-            <div class="flex flex-column gap-2">
-              @if (canPreviewPosition()) {
-                <p-button
-                  type="button"
-                  label="Afficher ma position"
-                  icon="pi pi-map"
-                  severity="secondary"
-                  [outlined]="true"
-                  [loading]="positionLoading()"
-                  styleClass="w-full justify-content-center"
-                  (onClick)="showMyPositionOnMap()"
-                />
-              }
-
-              @if (canStart()) {
-                <p-button
-                  type="button"
-                  label="Démarrer la livraison"
-                  icon="pi pi-play"
-                  [loading]="actionLoading()"
-                  styleClass="w-full justify-content-center"
-                  (onClick)="startDelivery()"
-                />
-              }
-
-              @if (canSendPosition()) {
-                <p-button
-                  type="button"
-                  label="Envoyer ma position actuelle"
-                  icon="pi pi-map-marker"
-                  severity="info"
-                  [loading]="positionLoading()"
-                  styleClass="w-full justify-content-center"
-                  (onClick)="sendCurrentPosition()"
-                />
-              }
-
-              @if (canComplete()) {
-                <p-button
-                  type="button"
-                  label="Terminer la livraison"
-                  icon="pi pi-check"
-                  severity="success"
-                  [loading]="actionLoading()"
-                  styleClass="w-full justify-content-center"
-                  (onClick)="completeDelivery()"
-                />
-              }
-
-              @if (canFail()) {
-                <p-button
-                  type="button"
-                  label="Signaler un problème"
-                  icon="pi pi-exclamation-triangle"
-                  severity="danger"
-                  [outlined]="true"
-                  [loading]="actionLoading()"
-                  styleClass="w-full justify-content-center"
-                  (onClick)="failDelivery()"
-                />
-              }
-
-              @if (!canStart() && !canSendPosition() && !canComplete() && !canFail()) {
-                <div class="empty-mini-state">
-                  <i class="pi pi-lock text-2xl text-color-secondary"></i>
-                  <p class="m-0 mt-2 text-color-secondary">
-                    Cette livraison est en lecture seule.
-                  </p>
-                </div>
-              }
-            </div>
-          </p-card>
+          </section>
         </div>
 
-        <div class="col-12">
-          <div class="grid">
-            <div class="col-12 lg:col-6">
-              <p-card styleClass="h-full">
-                <ng-template pTemplate="header">
-                  <div class="simple-card-header">
-                    <div class="section-icon">
-                      <i class="pi pi-map-marker"></i>
-                    </div>
+        <!-- =========================
+             BOTTOM : POSITIONS
+             ========================= -->
+        <div class="positions-grid">
+          <!-- Position affichée -->
+          <section class="detail-card">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-map-marker"></i>
+              </div>
 
-                    <div>
-                      <h3 class="m-0">Position affichée sur la carte</h3>
-                      <p class="m-0 mt-1 text-sm text-color-secondary">
-                        Position actuelle utilisée pour la prévisualisation.
-                      </p>
-                    </div>
-                  </div>
-                </ng-template>
-
-                @if (driverPosition(); as pos) {
-                  <div class="grid">
-                    <div class="col-12 md:col-4">
-                      <div class="data-box">
-                        <span>Latitude</span>
-                        <strong>{{ pos.latitude }}</strong>
-                      </div>
-                    </div>
-
-                    <div class="col-12 md:col-4">
-                      <div class="data-box">
-                        <span>Longitude</span>
-                        <strong>{{ pos.longitude }}</strong>
-                      </div>
-                    </div>
-
-                    <div class="col-12 md:col-4">
-                      <div class="data-box">
-                        <span>Précision</span>
-                        <strong>{{ pos.accuracy || '-' }} m</strong>
-                      </div>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="empty-mini-state">
-                    <i class="pi pi-map text-2xl text-color-secondary"></i>
-                    <p class="m-0 mt-2 text-color-secondary">
-                      Aucune position affichée pour le moment.
-                    </p>
-                  </div>
-                }
-              </p-card>
+              <div>
+                <h3>Position affichée sur la carte</h3>
+                <p>Position utilisée pour la prévisualisation.</p>
+              </div>
             </div>
 
-            <div class="col-12 lg:col-6">
-              <p-card styleClass="h-full">
-                <ng-template pTemplate="header">
-                  <div class="simple-card-header">
-                    <div class="section-icon">
-                      <i class="pi pi-location-arrow"></i>
-                    </div>
+            @if (driverPosition(); as pos) {
+              <div class="data-box-grid">
+                <div class="data-box">
+                  <span>Latitude</span>
+                  <strong>{{ pos.latitude }}</strong>
+                </div>
 
-                    <div>
-                      <h3 class="m-0">Dernière position envoyée</h3>
-                      <p class="m-0 mt-1 text-sm text-color-secondary">
-                        Position sauvegardée et visible côté client.
-                      </p>
-                    </div>
-                  </div>
-                </ng-template>
+                <div class="data-box">
+                  <span>Longitude</span>
+                  <strong>{{ pos.longitude }}</strong>
+                </div>
 
-                @if (lastPosition(); as last) {
-                  <div class="grid">
-                    <div class="col-12 md:col-3">
-                      <div class="data-box">
-                        <span>Latitude</span>
-                        <strong>{{ last.latitude }}</strong>
-                      </div>
-                    </div>
+                <div class="data-box">
+                  <span>Précision</span>
+                  <strong>{{ pos.accuracy || '-' }} m</strong>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-mini-state">
+                <i class="pi pi-map text-2xl text-color-secondary"></i>
+                <p>Aucune position affichée pour le moment.</p>
+              </div>
+            }
+          </section>
 
-                    <div class="col-12 md:col-3">
-                      <div class="data-box">
-                        <span>Longitude</span>
-                        <strong>{{ last.longitude }}</strong>
-                      </div>
-                    </div>
+          <!-- Dernière position envoyée -->
+          <section class="detail-card">
+            <div class="simple-card-header">
+              <div class="section-icon">
+                <i class="pi pi-location-arrow"></i>
+              </div>
 
-                    <div class="col-12 md:col-3">
-                      <div class="data-box">
-                        <span>Précision</span>
-                        <strong>{{ last.accuracy || '-' }} m</strong>
-                      </div>
-                    </div>
-
-                    <div class="col-12 md:col-3">
-                      <div class="data-box">
-                        <span>Heure</span>
-                        <strong>{{ last.eventTime | date:'short' }}</strong>
-                      </div>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="empty-mini-state">
-                    <i class="pi pi-location-arrow text-2xl text-color-secondary"></i>
-                    <p class="m-0 mt-2 text-color-secondary">
-                      Aucune position envoyée pour cette livraison.
-                    </p>
-                  </div>
-                }
-              </p-card>
+              <div>
+                <h3>Dernière position envoyée</h3>
+                <p>Position sauvegardée et visible côté client.</p>
+              </div>
             </div>
-          </div>
+
+            @if (lastPosition(); as last) {
+              <div class="data-box-grid four">
+                <div class="data-box">
+                  <span>Latitude</span>
+                  <strong>{{ last.latitude }}</strong>
+                </div>
+
+                <div class="data-box">
+                  <span>Longitude</span>
+                  <strong>{{ last.longitude }}</strong>
+                </div>
+
+                <div class="data-box">
+                  <span>Précision</span>
+                  <strong>{{ last.accuracy || '-' }} m</strong>
+                </div>
+
+                <div class="data-box">
+                  <span>Heure</span>
+                  <strong>{{ last.eventTime | date:'short' }}</strong>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-mini-state">
+                <i class="pi pi-location-arrow text-2xl text-color-secondary"></i>
+                <p>Aucune position envoyée pour cette livraison.</p>
+              </div>
+            }
+          </section>
         </div>
       </div>
     }

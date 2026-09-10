@@ -1,0 +1,210 @@
+<div class="manager-dashboard-page">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div>
+      <span class="page-eyebrow">Espace gestionnaire</span>
+
+      <h2>Tableau de bord</h2>
+
+      <p>
+        Vue globale sur les clients, commandes, colis, livreurs et livraisons.
+      </p>
+    </div>
+
+    <p-button
+      label="Actualiser"
+      icon="pi pi-refresh"
+      severity="secondary"
+      [outlined]="true"
+      [loading]="loading()"
+      (onClick)="loadDashboard()"
+    />
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    @for (card of kpiCards(); track card.label) {
+      <a class="kpi-card" [routerLink]="card.route">
+        <div class="kpi-icon">
+          <i [class]="card.icon"></i>
+        </div>
+
+        <div class="kpi-content">
+          <span>{{ card.label }}</span>
+          <strong>{{ card.value }}</strong>
+          <small>{{ card.subtitle }}</small>
+        </div>
+      </a>
+    }
+  </div>
+
+  <!-- Main content -->
+  <div class="dashboard-grid">
+    <!-- Répartition commandes -->
+    <section class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Répartition des commandes</h3>
+          <p>Statuts actuels des commandes logistiques.</p>
+        </div>
+
+        <i class="pi pi-chart-bar header-icon"></i>
+      </div>
+
+      <div class="status-list">
+        @for (item of orderStatusItems(); track item.status) {
+          <div class="status-row">
+            <div class="status-info">
+              <p-tag
+                [value]="item.label"
+                [severity]="getOrderSeverity(item.status)"
+              />
+
+              <span>{{ item.value }} commande(s)</span>
+            </div>
+
+            <div class="progress-line">
+              <span [style.width.%]="item.percent"></span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Résumé opérationnel -->
+    <section class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Résumé opérationnel</h3>
+          <p>Indicateurs importants pour le suivi quotidien.</p>
+        </div>
+
+        <i class="pi pi-bolt header-icon"></i>
+      </div>
+
+      <div class="summary-list">
+        <div class="summary-item">
+          <div class="summary-icon">
+            <i class="pi pi-clock"></i>
+          </div>
+
+          <div>
+            <strong>{{ stats().pendingOrders }}</strong>
+            <span>Commandes en attente ou validées</span>
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-icon">
+            <i class="pi pi-send"></i>
+          </div>
+
+          <div>
+            <strong>{{ stats().activeDeliveries }}</strong>
+            <span>Livraisons actuellement en cours</span>
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-icon">
+            <i class="pi pi-times-circle"></i>
+          </div>
+
+          <div>
+            <strong>{{ stats().cancelledOrders }}</strong>
+            <span>Commandes annulées</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bottom content -->
+  <div class="dashboard-grid">
+    <!-- Dernières commandes -->
+    <section class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Dernières commandes</h3>
+          <p>Les commandes les plus récentes.</p>
+        </div>
+
+        <p-button
+          label="Voir tout"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          [text]="true"
+          routerLink="/orders"
+        />
+      </div>
+
+      <div class="mini-list">
+        @for (order of recentOrders(); track order.orderId) {
+          <a class="mini-list-item" [routerLink]="['/orders', order.orderId]">
+            <div class="mini-icon">
+              <i class="pi pi-receipt"></i>
+            </div>
+
+            <div class="mini-content">
+              <strong>Commande #{{ order.orderId }}</strong>
+              <span>{{ getCustomerName(order) }}</span>
+            </div>
+
+            <p-tag
+              [value]="getOrderStatusLabel(order.status)"
+              [severity]="getOrderSeverity(order.status)"
+            />
+          </a>
+        } @empty {
+          <div class="empty-mini-state">
+            <i class="pi pi-shopping-cart"></i>
+            <span>Aucune commande récente.</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Livraisons actives -->
+    <section class="dashboard-card">
+      <div class="card-header">
+        <div>
+          <h3>Livraisons actives</h3>
+          <p>Livraisons affectées ou en cours.</p>
+        </div>
+
+        <p-button
+          label="Voir tout"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          [text]="true"
+          routerLink="/deliveries"
+        />
+      </div>
+
+      <div class="mini-list">
+        @for (assignment of activeAssignments(); track assignment.id) {
+          <div class="mini-list-item">
+            <div class="mini-icon">
+              <i class="pi pi-truck"></i>
+            </div>
+
+            <div class="mini-content">
+              <strong>Colis #{{ assignment.parcelId }}</strong>
+              <span>{{ getAgentName(assignment) }}</span>
+            </div>
+
+            <p-tag
+              [value]="getDeliveryStatusLabel(assignment.status)"
+              [severity]="getDeliverySeverity(assignment.status)"
+            />
+          </div>
+        } @empty {
+          <div class="empty-mini-state">
+            <i class="pi pi-send"></i>
+            <span>Aucune livraison active.</span>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</div>

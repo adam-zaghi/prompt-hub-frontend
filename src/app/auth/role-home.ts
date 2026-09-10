@@ -6,7 +6,7 @@ export function getHomeUrlByRole(role?: string | null): string | null {
       return '/client/profile'
 
     case 'DELIVERY_AGENT':
-      return '/driver/deliveries'
+      return '/driver/dashboard'
 
     case 'ADMIN':
     case 'LOGISTICS_MANAGER':

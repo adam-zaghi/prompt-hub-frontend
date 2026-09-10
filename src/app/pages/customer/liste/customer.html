@@ -1,86 +1,187 @@
-<div class="mt-2">
-  <div class="flex align-items-center justify-content-between mb-3">
-    <div>
-      <h2 class="m-0">Liste des clients</h2>
-      <p class="text-color-secondary mt-1 mb-0">
-        Consultez les clients enregistrés dans SmartLog.
-      </p>
+<div class="customer-page">
+  <!-- Header page -->
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon">
+        <i class="pi pi-users"></i>
+      </div>
+
+      <div>
+        <h2>Liste des clients</h2>
+        <p>
+          Consultez et gérez les clients enregistrés dans SmartLog.
+        </p>
+      </div>
     </div>
+
+    <p-button
+      label="Nouveau client"
+      icon="pi pi-plus"
+      routerLink="/customers/create"
+    />
   </div>
 
-  <p-table
-    [value]="(customers$ | async) ?? []"
-    [tableStyle]="{ 'min-width': '60rem' }"
-    [paginator]="true"
-    [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="{first} à {last} sur {totalRecords} clients"
-  >
-    <ng-template #header>
-      <tr>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Email</th>
-        <th>Contact</th>
-        <th>Adresse principale</th>
-        <th>Date de création</th>
-        <th>Action</th>
-      </tr>
-    </ng-template>
+  <!-- Table card -->
+  <section class="table-card">
+    <p-table
+      #dt
+      styleClass="customer-table"
+      [value]="(customers$ | async) ?? []"
+      [tableStyle]="{ 'min-width': '68rem' }"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first} à {last} sur {totalRecords} clients"
+      [globalFilterFields]="['firstName', 'lastName', 'email', 'phone']"
+      responsiveLayout="scroll"
+      dataKey="id"
+    >
+      <ng-template pTemplate="caption">
+        <div class="table-toolbar">
+          <div>
+            <h3>Clients</h3>
+            <span>
+              Liste des profils clients avec leurs informations principales.
+            </span>
+          </div>
 
-    <ng-template #body let-customer>
-      <tr>
-        <td>{{ customer.lastName }}</td>
+          <span class="search-box p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Rechercher un client..."
+              (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            />
+          </span>
+        </div>
+      </ng-template>
 
-        <td>{{ customer.firstName }}</td>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Client</th>
+          <th>Email</th>
+          <th>Contact</th>
+          <th>Adresse principale</th>
+          <th>Date de création</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </ng-template>
 
-        <td>
-          <a [href]="'mailto:' + customer.email">
-            {{ customer.email }}
-          </a>
-        </td>
+      <ng-template pTemplate="body" let-customer>
+        <tr>
+          <!-- Client -->
+          <td>
+            <div class="customer-cell">
+              <div class="customer-avatar">
+                {{ getInitials(customer) }}
+              </div>
 
-        <td>
-          <a [href]="'tel:' + customer.phone">
-            {{ customer.phone }}
-          </a>
-        </td>
+              <div>
+                <div class="customer-name">
+                  {{ customer.firstName }} {{ customer.lastName }}
+                </div>
 
-        <td>
-          @if (getDefaultAddress(customer); as address) {
-            <div>
-              <span>{{ address.street }}</span>
-              <br />
-              <small class="text-color-secondary">
-                {{ address.postalCode }} {{ address.city }},
-                {{ address.country }}
+                <small class="customer-id">
+                  Client #{{ customer.id }}
+                </small>
+              </div>
+            </div>
+          </td>
+
+          <!-- Email -->
+          <td>
+            <a class="link-cell" [href]="'mailto:' + customer.email">
+              <i class="pi pi-envelope"></i>
+              <span>{{ customer.email }}</span>
+            </a>
+          </td>
+
+          <!-- Phone -->
+          <td>
+            <a class="link-cell" [href]="'tel:' + customer.phone">
+              <i class="pi pi-phone"></i>
+              <span>{{ customer.phone }}</span>
+            </a>
+          </td>
+
+          <!-- Address -->
+          <td>
+            @if (getDefaultAddress(customer); as address) {
+              <div class="address-card">
+                <div class="address-main">
+                  <i class="pi pi-map-marker"></i>
+                  <span>{{ address.street }}</span>
+                </div>
+
+                <small>
+                  {{ address.postalCode }} {{ address.city }},
+                  {{ address.country }}
+                </small>
+              </div>
+            } @else {
+              <span class="empty-address">
+                <i class="pi pi-info-circle"></i>
+                Aucune adresse par défaut
+              </span>
+            }
+          </td>
+
+          <!-- Date -->
+          <td>
+            <div class="date-cell">
+              <span>
+                {{ customer.createdAt | date: 'dd/MM/yyyy' }}
+              </span>
+
+              <small>
+                {{ customer.createdAt | date: 'HH:mm' }}
               </small>
             </div>
-          } @else {
-            <span class="text-color-secondary">
-              Aucune adresse par defaut
-            </span>
-          }
-        </td>
+          </td>
 
-        <td>
-          {{ customer.createdAt | date: 'dd/MM/yyyy à HH:mm' }}
-        </td>
-        <td>
-          <p-button label="supprimer" (onClick)="deleteCustomer(customer.id)">
+          <!-- Actions -->
+          <td>
+            <div class="action-cell">
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                [text]="true"
+                severity="danger"
+                ariaLabel="Supprimer le client"
+                pTooltip="Supprimer"
+                tooltipPosition="top"
+                (onClick)="deleteCustomer(customer.id)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
 
-          </p-button>
-        </td>
-      </tr>
-    </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="pi pi-users"></i>
+              </div>
 
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="7" class="text-center p-4">
-          Aucun client trouvé.
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+              <h3>Aucun client trouvé</h3>
+
+              <p>
+                Aucun client n’est encore enregistré dans SmartLog.
+              </p>
+
+              <p-button
+                label="Ajouter un client"
+                icon="pi pi-plus"
+                routerLink="/customers/create"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
 </div>

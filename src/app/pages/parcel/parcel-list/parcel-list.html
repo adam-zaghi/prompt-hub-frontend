@@ -1,104 +1,223 @@
-<div class="mt-2">
-  <div class="flex align-items-center justify-content-between mb-3">
-    <div>
-      <h2 class="m-0">Liste des colis</h2>
-      <p class="text-color-secondary mt-1 mb-0">
-        Consultez les colis enregistrés dans SmartLog.
-      </p>
+<div class="parcels-page">
+  <!-- Header page -->
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon">
+        <i class="pi pi-box"></i>
+      </div>
+
+      <div>
+        <h2>Liste des colis</h2>
+        <p>
+          Consultez les colis enregistrés dans SmartLog.
+        </p>
+      </div>
     </div>
   </div>
 
-  <p-table
-    [value]="(parcels$ | async) ?? []"
-    [tableStyle]="{ 'min-width': '75rem' }"
-    [paginator]="true"
-    [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="{first} à {last} sur {totalRecords} colis"
-  >
-    <ng-template #header>
-      <tr>
-        <th>ID</th>
-        <th>Commande</th>
-        <th>Statut</th>
-        <th>Priorité</th>
-        <th>Poids</th>
-        <th>Dimensions</th>
-        <th>Options</th>
-        <th>Livraison estimée</th>
-        <th>Action</th>
-      </tr>
-    </ng-template>
-
-    <ng-template #body let-parcel>
-      <tr>
-        <td>#{{ parcel.id }}</td>
-
-        <td [routerLink]="['/orders', parcel.orderId]">
-
-            Commande #{{ parcel.orderId }}
-
-        </td>
-
-        <td>
-          <p-tag [value]="parcel.status" [severity]="getSeverity(parcel.status)" />
-        </td>
-
-        <td>{{ parcel.priority }}</td>
-
-        <td>{{ parcel.weight }} kg</td>
-
-        <td>
-          {{ parcel.length }} x {{ parcel.width }} x {{ parcel.height }} cm
-        </td>
-
-        <td>
-          @if (parcel.fragile) {
-            <p-tag value="Fragile" severity="warn" />
-          }
-
-          @if (parcel.insured) {
-            <p-tag value="Assuré" severity="info" class="ml-2" />
-          }
-        </td>
-
-        <td>
-          @if (parcel.estimatedDelivery) {
-            {{ parcel.estimatedDelivery | date: 'dd/MM/yyyy à HH:mm' }}
-          } @else {
-            <span class="text-color-secondary">Non définie</span>
-          }
-        </td>
-
-        <td>
-          <div class="flex gap-2">
-            <p-button
-              label="Voir commande"
-              icon="pi pi-eye"
-              size="small"
-              severity="secondary"
-              [routerLink]="['/orders', parcel.orderId]"
-            />
-
-            <p-button
-              label="Supprimer"
-              icon="pi pi-trash"
-              size="small"
-              severity="danger"
-              (onClick)="deleteParcel(parcel.id)"
-            />
+  <!-- Table card -->
+  <section class="table-card">
+    <p-table
+      #dt
+      styleClass="parcels-table"
+      [value]="(parcels$ | async) ?? []"
+      [tableStyle]="{ 'min-width': '78rem' }"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first} à {last} sur {totalRecords} colis"
+      [globalFilterFields]="['id', 'orderId', 'status', 'priority']"
+      responsiveLayout="scroll"
+      dataKey="id"
+    >
+      <ng-template pTemplate="caption">
+        <div class="table-toolbar">
+          <div>
+            <h3>Colis</h3>
+            <span>
+              Suivi des colis, priorités, dimensions et dates estimées.
+            </span>
           </div>
-        </td>
-      </tr>
-    </ng-template>
 
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="9" class="text-center p-4">
-          Aucun colis trouvé.
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          <span class="search-box p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Rechercher un colis..."
+              (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Colis</th>
+          <th>Commande</th>
+          <th>Statut</th>
+          <th>Priorité</th>
+          <th>Poids</th>
+          <th>Dimensions</th>
+          <th>Options</th>
+          <th>Livraison estimée</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-parcel>
+        <tr>
+          <!-- Parcel -->
+          <td>
+            <div class="parcel-cell">
+              <div class="parcel-icon">
+                <i class="pi pi-box"></i>
+              </div>
+
+              <div>
+                <div class="parcel-id">
+                  Colis #{{ parcel.id }}
+                </div>
+
+                <small>
+                  {{ getParcelSubtitle(parcel.status) }}
+                </small>
+              </div>
+            </div>
+          </td>
+
+          <!-- Order -->
+          <td>
+            <a class="order-link" [routerLink]="['/orders', parcel.orderId]">
+              <i class="pi pi-receipt"></i>
+              <span>Commande #{{ parcel.orderId }}</span>
+            </a>
+          </td>
+
+          <!-- Status -->
+          <td>
+            <p-tag
+              [value]="getStatusLabel(parcel.status)"
+              [severity]="getSeverity(parcel.status)"
+              styleClass="status-tag"
+            />
+          </td>
+
+          <!-- Priority -->
+          <td>
+            <p-tag
+              [value]="getPriorityLabel(parcel.priority)"
+              [severity]="getPrioritySeverity(parcel.priority)"
+              styleClass="priority-tag"
+            />
+          </td>
+
+          <!-- Weight -->
+          <td>
+            <div class="weight-cell">
+              <i class="pi pi-inbox"></i>
+              <span>{{ parcel.weight }} kg</span>
+            </div>
+          </td>
+
+          <!-- Dimensions -->
+          <td>
+            <div class="dimensions-cell">
+              <span>
+                {{ parcel.length }} × {{ parcel.width }} × {{ parcel.height }}
+              </span>
+
+              <small>cm</small>
+            </div>
+          </td>
+
+          <!-- Options -->
+          <td>
+            <div class="options-cell">
+              @if (parcel.fragile) {
+                <p-tag value="Fragile" severity="warn" />
+              }
+
+              @if (parcel.insured) {
+                <p-tag value="Assuré" severity="info" />
+              }
+
+              @if (!parcel.fragile && !parcel.insured) {
+                <span class="standard-option">
+                  <i class="pi pi-check-circle"></i>
+                  Standard
+                </span>
+              }
+            </div>
+          </td>
+
+          <!-- Estimated delivery -->
+          <td>
+            @if (parcel.estimatedDelivery) {
+              <div class="date-cell">
+                <span>
+                  {{ parcel.estimatedDelivery | date: 'dd/MM/yyyy' }}
+                </span>
+
+                <small>
+                  {{ parcel.estimatedDelivery | date: 'HH:mm' }}
+                </small>
+              </div>
+            } @else {
+              <span class="not-defined">
+                <i class="pi pi-clock"></i>
+                Non définie
+              </span>
+            }
+          </td>
+
+          <!-- Actions -->
+          <td>
+            <div class="action-cell">
+              <p-button
+                icon="pi pi-eye"
+                severity="secondary"
+                [text]="true"
+                [rounded]="true"
+                ariaLabel="Voir la commande"
+                pTooltip="Voir commande"
+                tooltipPosition="top"
+                [routerLink]="['/orders', parcel.orderId]"
+              />
+
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                ariaLabel="Supprimer le colis"
+                pTooltip="Supprimer"
+                tooltipPosition="top"
+                (onClick)="deleteParcel(parcel.id)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="pi pi-box"></i>
+              </div>
+
+              <h3>Aucun colis trouvé</h3>
+
+              <p>
+                Aucun colis n’est encore enregistré dans SmartLog.
+              </p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
 </div>

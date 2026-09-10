@@ -53,6 +53,12 @@ export class OrderDetail implements OnInit {
     })
   }
 
+
+  canAddParcel(order: OrderModel): boolean {
+    return order.status === 'VALIDATED' && order.lockedForDelivery !== true
+  }
+
+
   getParcelSeverity(status: ParcelStatus) {
     switch (status) {
       case 'CREATED':

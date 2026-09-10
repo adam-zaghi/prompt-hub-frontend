@@ -1,21 +1,32 @@
 import { Component, inject, OnInit, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { RouterLink } from '@angular/router'
 
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { TagModule } from 'primeng/tag'
+import { InputTextModule } from 'primeng/inputtext'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { DeliveryAssignmentService } from '../delivery-assignment.service'
 import { DeliveryAssignmentModel, DeliveryStatus } from '../delivery-assignment.model'
-import { RouterLink } from '@angular/router'
 
 type TagSeverity = 'success' | 'info' | 'danger' | 'secondary' | 'warn' | 'contrast'
 
 @Component({
   selector: 'app-delivery-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, TagModule, RouterLink],
+  imports: [
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    TagModule,
+    RouterLink,
+    InputTextModule,
+    TooltipModule,
+  ],
   templateUrl: './delivery-list.component.html',
+  styleUrl: './delivery-list.component.scss',
 })
 export class DeliveryListComponent implements OnInit {
   private deliveryAssignmentService = inject(DeliveryAssignmentService)
@@ -117,9 +128,52 @@ export class DeliveryListComponent implements OnInit {
     }
   }
 
+  getStatusLabel(status: DeliveryStatus): string {
+    switch (status) {
+      case 'ASSIGNED':
+        return 'Affectée'
+      case 'IN_PROGRESS':
+        return 'En cours'
+      case 'DELIVERED':
+        return 'Livrée'
+      case 'FAILED':
+        return 'Échouée'
+      case 'CANCELLED':
+        return 'Annulée'
+      default:
+        return status
+    }
+  }
+
+  getDeliverySubtitle(status: DeliveryStatus): string {
+    switch (status) {
+      case 'ASSIGNED':
+        return 'En attente de démarrage'
+      case 'IN_PROGRESS':
+        return 'Livraison en cours'
+      case 'DELIVERED':
+        return 'Livraison terminée'
+      case 'FAILED':
+        return 'Problème signalé'
+      case 'CANCELLED':
+        return 'Livraison annulée'
+      default:
+        return 'Affectation logistique'
+    }
+  }
+
   getAgentName(assignment: DeliveryAssignmentModel): string {
     if (!assignment.agent) return '-'
     return `${assignment.agent.firstName} ${assignment.agent.lastName}`
+  }
+
+  getAgentInitials(assignment: DeliveryAssignmentModel): string {
+    if (!assignment.agent) return '-'
+
+    const firstNameInitial = assignment.agent.firstName?.charAt(0) ?? ''
+    const lastNameInitial = assignment.agent.lastName?.charAt(0) ?? ''
+
+    return `${firstNameInitial}${lastNameInitial}`.toUpperCase()
   }
 
   private showError(err: any, fallbackMessage: string): void {

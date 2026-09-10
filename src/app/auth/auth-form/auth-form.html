@@ -1,210 +1,310 @@
-<div class="container">
-
-  <p-card [header]="mode() === 'login' ? 'Connexion' : 'Créer un compte'">
-
-    @if (mode() === 'login') {
-
-      <!-- =========================
-           LOGIN
-           ========================= -->
-      <form [formGroup]="loginForm" (ngSubmit)="submit()">
-
-        <div class="field">
-          <label for="username">Email</label>
-
-          <input
-            id="username"
-            class="w-full"
-            formControlName="username"
-            type="email"
-            pInputText
-          >
-
-          @if (
-            loginForm.controls.username.touched &&
-            loginForm.controls.username.invalid
-            ) {
-            <small class="invalid-feedback">
-              L'email utilisateur est requis
-            </small>
-          }
+<div class="auth-page">
+  <div class="auth-shell">
+    <!-- Partie gauche : présentation -->
+    <section class="auth-hero">
+      <div class="brand-row">
+        <div class="brand-logo">
+          <i class="pi pi-truck"></i>
         </div>
 
-        <div class="field">
-          <label for="loginPassword">Mot de passe</label>
+        <div>
+          <h1>SmartLog</h1>
+          <p>Logistics workspace</p>
+        </div>
+      </div>
 
-          <p-password
-            inputId="loginPassword"
-            class="w-full"
-            inputStyleClass="w-full"
-            formControlName="password"
-            [feedback]="false"
-          />
+      <div class="hero-content">
+        <span class="hero-badge">
+          <i class="pi pi-map-marker"></i>
+          Suivi logistique intelligent
+        </span>
 
-          @if (
-            loginForm.controls.password.touched &&
-            loginForm.controls.password.invalid
-            ) {
-            <small class="invalid-feedback">
-              Le mot de passe est requis (min 4 carac.)
-            </small>
-          }
+        <h2>
+          Gérez vos commandes, colis et livraisons depuis une seule plateforme.
+        </h2>
+
+        <p>
+          SmartLog centralise les opérations logistiques entre gestionnaires,
+          clients et livreurs avec un suivi en temps réel.
+        </p>
+      </div>
+
+      <div class="hero-features">
+        <div class="hero-feature">
+          <i class="pi pi-box"></i>
+          <span>Gestion des colis</span>
         </div>
 
-        <div class="flex gap-2 justify-content-end">
+        <div class="hero-feature">
+          <i class="pi pi-send"></i>
+          <span>Livraisons suivies</span>
+        </div>
 
-          <p-button
+        <div class="hero-feature">
+          <i class="pi pi-bolt"></i>
+          <span>Synchronisation Kafka</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Partie droite : formulaire -->
+    <section class="auth-card-wrapper">
+      <p-card styleClass="auth-card">
+        <div class="auth-card-header">
+          <div>
+            <span class="auth-eyebrow">
+              {{ mode() === 'login' ? 'Connexion' : 'Inscription' }}
+            </span>
+
+            <h2>
+              {{ mode() === 'login' ? 'Bienvenue' : 'Créer un compte' }}
+            </h2>
+
+            <p>
+              {{
+                mode() === 'login'
+                  ? 'Connectez-vous pour accéder à votre espace SmartLog.'
+                  : 'Renseignez vos informations pour créer votre accès.'
+              }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mode-switch">
+          <button
             type="button"
-            severity="secondary"
-            (onClick)="toggleMode()"
-            label="Créer un compte"
-          />
-
-          <p-button
-            type="submit"
-            label="Connexion"
-          />
-
-        </div>
-
-      </form>
-
-    } @else {
-
-      <!-- =========================
-           REGISTER
-           ========================= -->
-      <form [formGroup]="registerForm" (ngSubmit)="submit()">
-
-        <div class="field">
-          <label for="firstName">Prénom</label>
-
-          <input
-            id="firstName"
-            class="w-full"
-            formControlName="firstName"
-            type="text"
-            pInputText
+            class="mode-button"
+            [class.mode-button-active]="mode() === 'login'"
+            (click)="mode.set('login')"
           >
+            Connexion
+          </button>
 
-          @if (
-            registerForm.controls.firstName.touched &&
-            registerForm.controls.firstName.invalid
-            ) {
-            <small class="invalid-feedback">
-              Le prénom est requis
-            </small>
-          }
-        </div>
-
-
-        <div class="field">
-          <label for="lastName">Nom</label>
-
-          <input
-            id="lastName"
-            class="w-full"
-            formControlName="lastName"
-            type="text"
-            pInputText
-          >
-
-          @if (
-            registerForm.controls.lastName.touched &&
-            registerForm.controls.lastName.invalid
-            ) {
-            <small class="invalid-feedback">
-              Le nom est requis
-            </small>
-          }
-        </div>
-
-
-        <div class="field">
-          <label for="email">Email</label>
-
-          <input
-            id="email"
-            class="w-full"
-            formControlName="email"
-            type="email"
-            pInputText
-          >
-
-          @if (
-            registerForm.controls.email.touched &&
-            registerForm.controls.email.invalid
-            ) {
-            <small class="invalid-feedback">
-              Un email valide est requis
-            </small>
-          }
-        </div>
-
-
-        <div class="field">
-          <label for="phone">Téléphone</label>
-
-          <input
-            id="phone"
-            class="w-full"
-            formControlName="phone"
-            type="text"
-            pInputText
-          >
-
-          @if (
-            registerForm.controls.phone.touched &&
-            registerForm.controls.phone.invalid
-            ) {
-            <small class="invalid-feedback">
-              Le numéro de téléphone est requis
-            </small>
-          }
-        </div>
-
-
-        <div class="field">
-          <label for="registerPassword">Mot de passe</label>
-
-          <p-password
-            inputId="registerPassword"
-            class="w-full"
-            inputStyleClass="w-full"
-            formControlName="password"
-          />
-
-          @if (
-            registerForm.controls.password.touched &&
-            registerForm.controls.password.invalid
-            ) {
-            <small class="invalid-feedback">
-              Le mot de passe est requis (min 4 carac.)
-            </small>
-          }
-        </div>
-
-
-        <div class="flex gap-2 justify-content-end">
-
-          <p-button
+          <button
             type="button"
-            severity="secondary"
-            (onClick)="toggleMode()"
-            label="Se connecter"
-          />
-
-          <p-button
-            type="submit"
-            label="Créer le compte"
-          />
-
+            class="mode-button"
+            [class.mode-button-active]="mode() === 'register'"
+            (click)="mode.set('register')"
+          >
+            Inscription
+          </button>
         </div>
 
-      </form>
+        @if (errorMessage()) {
+          <div class="auth-alert">
+            <i class="pi pi-exclamation-circle"></i>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
 
-    }
+        @if (mode() === 'login') {
+          <!-- LOGIN -->
+          <form [formGroup]="loginForm" (ngSubmit)="submit()" class="auth-form">
+            <div class="field">
+              <label for="username">Adresse e-mail</label>
 
-  </p-card>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-envelope"></i>
+                <input
+                  id="username"
+                  class="w-full auth-input"
+                  formControlName="username"
+                  type="email"
+                  pInputText
+                  placeholder="exemple@email.com"
+                />
+              </span>
 
+              @if (
+                loginForm.controls.username.touched &&
+                loginForm.controls.username.invalid
+                ) {
+                <small class="invalid-feedback">
+                  L’adresse e-mail est requise.
+                </small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="loginPassword">Mot de passe</label>
+
+              <p-password
+                inputId="loginPassword"
+                class="w-full"
+                inputStyleClass="w-full auth-input"
+                formControlName="password"
+                [feedback]="false"
+                [toggleMask]="true"
+                placeholder="Votre mot de passe"
+              />
+
+              @if (
+                loginForm.controls.password.touched &&
+                loginForm.controls.password.invalid
+                ) {
+                <small class="invalid-feedback">
+                  Le mot de passe est requis.
+                </small>
+              }
+            </div>
+
+            <p-button
+              type="submit"
+              label="Se connecter"
+              icon="pi pi-sign-in"
+              styleClass="w-full justify-content-center auth-submit"
+              [loading]="loading()"
+            />
+
+            <p class="auth-footer-text">
+              Vous n’avez pas encore de compte ?
+              <button type="button" (click)="toggleMode()">
+                Créer un compte
+              </button>
+            </p>
+          </form>
+        } @else {
+          <!-- REGISTER -->
+          <form [formGroup]="registerForm" (ngSubmit)="submit()" class="auth-form">
+            <div class="grid form-grid">
+              <div class="col-12 md:col-6">
+                <div class="field">
+                  <label for="firstName">Prénom</label>
+
+                  <input
+                    id="firstName"
+                    class="w-full auth-input"
+                    formControlName="firstName"
+                    type="text"
+                    pInputText
+                    placeholder="Adam"
+                  />
+
+                  @if (
+                    registerForm.controls.firstName.touched &&
+                    registerForm.controls.firstName.invalid
+                    ) {
+                    <small class="invalid-feedback">
+                      Le prénom est requis.
+                    </small>
+                  }
+                </div>
+              </div>
+
+              <div class="col-12 md:col-6">
+                <div class="field">
+                  <label for="lastName">Nom</label>
+
+                  <input
+                    id="lastName"
+                    class="w-full auth-input"
+                    formControlName="lastName"
+                    type="text"
+                    pInputText
+                    placeholder="Zaghi"
+                  />
+
+                  @if (
+                    registerForm.controls.lastName.touched &&
+                    registerForm.controls.lastName.invalid
+                    ) {
+                    <small class="invalid-feedback">
+                      Le nom est requis.
+                    </small>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="email">Adresse e-mail</label>
+
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-envelope"></i>
+                <input
+                  id="email"
+                  class="w-full auth-input"
+                  formControlName="email"
+                  type="email"
+                  pInputText
+                  placeholder="exemple@email.com"
+                />
+              </span>
+
+              @if (
+                registerForm.controls.email.touched &&
+                registerForm.controls.email.invalid
+                ) {
+                <small class="invalid-feedback">
+                  Une adresse e-mail valide est requise.
+                </small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="phone">Téléphone</label>
+
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-phone"></i>
+                <input
+                  id="phone"
+                  class="w-full auth-input"
+                  formControlName="phone"
+                  type="text"
+                  pInputText
+                  placeholder="0600000000"
+                />
+              </span>
+
+              @if (
+                registerForm.controls.phone.touched &&
+                registerForm.controls.phone.invalid
+                ) {
+                <small class="invalid-feedback">
+                  Le numéro de téléphone est requis.
+                </small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="registerPassword">Mot de passe</label>
+
+              <p-password
+                inputId="registerPassword"
+                class="w-full"
+                inputStyleClass="w-full auth-input"
+                formControlName="password"
+                [toggleMask]="true"
+                placeholder="Créer un mot de passe"
+              />
+
+              @if (
+                registerForm.controls.password.touched &&
+                registerForm.controls.password.invalid
+                ) {
+                <small class="invalid-feedback">
+                  Le mot de passe doit contenir au moins 4 caractères.
+                </small>
+              }
+            </div>
+
+            <p-button
+              type="submit"
+              label="Créer le compte"
+              icon="pi pi-user-plus"
+              styleClass="w-full justify-content-center auth-submit"
+              [loading]="loading()"
+            />
+
+            <p class="auth-footer-text">
+              Vous avez déjà un compte ?
+              <button type="button" (click)="toggleMode()">
+                Se connecter
+              </button>
+            </p>
+          </form>
+        }
+      </p-card>
+    </section>
+  </div>
 </div>

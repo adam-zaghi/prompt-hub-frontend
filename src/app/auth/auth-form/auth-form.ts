@@ -18,11 +18,14 @@ import { createUserRequest } from '../createUserRequest'
 export class AuthForm {
   authService = inject(AuthService)
   routeur = inject(Router)
+  loading = signal(false)
+  errorMessage = signal<string | null>(null)
 
   // login / register
   mode = signal<'login' | 'register'>('login')
 
   toggleMode() {
+    this.errorMessage.set(null)
     this.mode.update((value) => (value === 'login' ? 'register' : 'login'))
   }
 
@@ -102,10 +105,38 @@ export class AuthForm {
   }
 
   login(username: string, password: string) {
-    this.authService.login(username, password).subscribe(() => void this.routeur.navigate(['/']))
+    this.loading.set(true)
+    this.errorMessage.set(null)
+
+    this.authService.login(username, password).subscribe({
+      next: () => {
+        this.loading.set(false)
+        void this.routeur.navigate(['/'])
+      },
+      error: (err) => {
+        console.error(err)
+        this.loading.set(false)
+        this.errorMessage.set(
+          err?.error?.message || err?.error || 'Connexion impossible. Vérifiez vos identifiants.',
+        )
+      },
+    })
   }
 
   register(data: createUserRequest) {
-    this.authService.register(data).subscribe(() => void this.routeur.navigate(['/']))
+    this.loading.set(true)
+    this.errorMessage.set(null)
+
+    this.authService.register(data).subscribe({
+      next: () => {
+        this.loading.set(false)
+        void this.routeur.navigate(['/'])
+      },
+      error: (err) => {
+        console.error(err)
+        this.loading.set(false)
+        this.errorMessage.set(err?.error?.message || err?.error || 'Création du compte impossible.')
+      },
+    })
   }
 }

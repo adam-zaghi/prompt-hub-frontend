@@ -9,13 +9,19 @@ export type OrderStatus =
   | 'CANCELLED';
 
 export interface OrderModel {
-  orderId: number;
-  customerId: number;
-  status: OrderStatus;
-  totalWeight: number;
-  createdAt: string;
-  updatedAt: string;
-  validatedAt?: string;
-  deliveryAddressId?: number;
-  customer?: CustomerModel;
+  orderId: number
+  customerId: number
+  status: OrderStatus
+  totalWeight: number
+  createdAt: string
+  updatedAt: string
+  validatedAt?: string
+  deliveryAddressId?: number
+  totalParcels?: number | null
+  deliveredParcels?: number | null
+  cancelledParcels?: number | null
+  remainingParcels?: number | null
+  lockedForDelivery?: boolean | null
+  lockedForDeliveryAt?: string | null
+  customer?: CustomerModel
 }

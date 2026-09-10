@@ -1,18 +1,1038 @@
+/* =========================================================
+   SMARTLOG - APP LAYOUT
+   Light / Dark mode compatible with PrimeNG Aura
+   ========================================================= */
+
 :host {
   display: block;
+  min-height: 100vh;
+
+  /*
+   * Background global de l'application.
+   * Contrairement à --p-surface-0, cette variable est
+   * explicitement adaptée au thème.
+   */
+  --smartlog-page-background: var(--p-surface-50);
 }
+
+
+/* =========================================================
+   DARK THEME VARIABLES
+   ========================================================= */
+
+:host-context(.app-dark) {
+  --smartlog-page-background: var(--p-surface-950);
+}
+
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+
+.app-shell {
+  --sidebar-width: 17rem;
+
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      color-mix(
+        in srgb,
+        var(--p-primary-color) 5%,
+        transparent
+      ),
+      transparent 30rem
+    ),
+    var(--smartlog-page-background);
+
+  color: var(--p-text-color);
+
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+
+/* =========================================================
+   DESKTOP SIDEBAR
+   ========================================================= */
 
 .desktop-sidebar {
   width: var(--sidebar-width);
+
+  transition:
+    width 200ms ease;
 }
+
+
+.app-sidebar {
+  background: color-mix(
+    in srgb,
+    var(--p-content-background) 96%,
+    transparent
+  );
+
+  border-right: 1px solid var(--p-content-border-color);
+
+  box-shadow:
+    5px 0 18px rgba(0, 0, 0, 0.035);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+
+/* =========================================================
+   SIDEBAR INNER
+   ========================================================= */
+
+.sidebar-inner {
+  padding: 0.75rem;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.sidebar-brand {
+  height: 4.25rem;
+
+  display: flex;
+  align-items: center;
+
+  padding:
+    0.25rem
+    0.25rem
+    0.75rem;
+
+  margin-bottom: 0.35rem;
+}
+
+
+.sidebar-brand-collapsed {
+  justify-content: center;
+}
+
+
+.brand-link {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  padding: 0.5rem;
+
+  border-radius: 0.85rem;
+
+  color: var(--p-text-color);
+
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+
+.brand-link:hover {
+  background: var(--p-content-hover-background);
+}
+
+
+.brand-link:active {
+  transform: scale(0.98);
+}
+
+
+/* =========================================================
+   BRAND LOGO
+   ========================================================= */
+
+.brand-logo {
+  width: 2.3rem;
+  height: 2.3rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  overflow: hidden;
+
+  border-radius: 0.75rem;
+
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 12%,
+    var(--p-content-background)
+  );
+}
+
+
+.brand-logo img {
+  width: 2rem;
+  height: 2rem;
+
+  object-fit: cover;
+
+  border-radius: 0.65rem;
+}
+
+
+/* =========================================================
+   BRAND TEXT
+   ========================================================= */
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+
+.brand-text strong {
+  color: var(--p-text-color);
+
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+.brand-text span {
+  margin-top: 0.15rem;
+
+  color: var(--p-text-muted-color);
+
+  font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.sidebar-nav {
+  padding: 0.4rem 0.15rem;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    var(--p-content-border-color)
+    transparent;
+}
+
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--p-content-border-color);
+
+  border-radius: 999px;
+}
+
+
+/* =========================================================
+   NAV GROUP
+   ========================================================= */
+
+.nav-group {
+  margin-bottom: 1.25rem;
+}
+
+
+.nav-group:last-child {
+  margin-bottom: 0.5rem;
+}
+
+
+.nav-group-label {
+  margin:
+    0
+    0
+    0.45rem;
+
+  padding:
+    0
+    0.65rem;
+
+  color: var(--p-text-muted-color);
+
+  font-size: 0.67rem;
+  font-weight: 700;
+
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
+
+  user-select: none;
+}
+
+
+/* =========================================================
+   NAV LINK
+   ========================================================= */
+
+.nav-link {
+  position: relative;
+
+  min-height: 2.65rem;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+
+  padding:
+    0.52rem
+    0.65rem;
+
+  overflow: hidden;
+
+  border-radius: 0.75rem;
+
+  color: var(--p-text-muted-color);
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  outline: none;
+
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+
+/* =========================================================
+   NAV HOVER
+   ========================================================= */
+
+.nav-link:hover {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 6%,
+    var(--p-content-hover-background)
+  );
+
+  color: var(--p-text-color);
+}
+
+
+.nav-link:hover:not(.nav-link-active) {
+  transform: translateX(2px);
+}
+
+
+/* =========================================================
+   NAV ICON
+   ========================================================= */
+
+.nav-icon {
+  width: 1.85rem;
+  height: 1.85rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 0.55rem;
+
+  color: inherit;
+
+  font-size: 0.95rem;
+
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+
+.nav-icon i {
+  font-size: 0.95rem;
+}
+
+
+.nav-link:hover .nav-icon {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 10%,
+    transparent
+  );
+
+  color: var(--p-primary-color);
+}
+
+
+/* =========================================================
+   NAV LABEL
+   ========================================================= */
+
+.nav-label {
+  flex: 1;
+
+  min-width: 0;
+
+  color: inherit;
+
+  font-size: 0.88rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  transition:
+    color 140ms ease;
+}
+
+
+/* =========================================================
+   ACTIVE NAV ITEM
+   ========================================================= */
+
+.nav-link-active {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 11%,
+    var(--p-content-background)
+  );
+
+  color: var(--p-primary-color);
+
+  font-weight: 600;
+
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--p-primary-color) 14%,
+      transparent
+    );
+}
+
+
+/* Barre verticale */
+
+.nav-link-active::before {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  top: 50%;
+
+  width: 3px;
+  height: 1.35rem;
+
+  border-radius:
+    0
+    999px
+    999px
+    0;
+
+  background: var(--p-primary-color);
+
+  transform: translateY(-50%);
+}
+
+
+/* Icon active */
+
+.nav-link-active .nav-icon {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 14%,
+    transparent
+  );
+
+  color: var(--p-primary-color);
+}
+
+
+/* Label active */
+
+.nav-link-active .nav-label {
+  color: var(--p-primary-color);
+
+  font-weight: 600;
+}
+
+
+/* Active + hover */
+
+.nav-link-active:hover {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 15%,
+    var(--p-content-background)
+  );
+
+  color: var(--p-primary-color);
+
+  transform: none;
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.nav-link:focus-visible {
+  outline: 2px solid
+  color-mix(
+    in srgb,
+    var(--p-primary-color) 55%,
+    transparent
+  );
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
+.nav-badge {
+  min-width: 1.4rem;
+  height: 1.4rem;
+
+  padding:
+    0
+    0.4rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 999px;
+
+  background: var(--p-content-hover-background);
+
+  color: var(--p-text-muted-color);
+
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  line-height: 1;
+}
+
+
+.nav-link-active .nav-badge {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 15%,
+    transparent
+  );
+
+  color: var(--p-primary-color);
+}
+
+
+/* =========================================================
+   COLLAPSED SIDEBAR
+   ========================================================= */
+
+.nav-link-collapsed {
+  width: 2.8rem;
+  height: 2.8rem;
+
+  min-height: 2.8rem;
+
+  margin-inline: auto;
+
+  padding: 0;
+
+  justify-content: center;
+
+  gap: 0;
+}
+
+
+.nav-link-collapsed:hover {
+  transform: none;
+}
+
+
+.nav-link-collapsed .nav-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+
+.nav-link-collapsed.nav-link-active::before {
+  display: none;
+}
+
+
+.nav-link-collapsed.nav-link-active {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 13%,
+    var(--p-content-background)
+  );
+
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--p-primary-color) 18%,
+      transparent
+    );
+}
+
+
+.nav-link-collapsed.nav-link-active .nav-icon {
+  background: transparent;
+}
+
+
+/* =========================================================
+   SIDEBAR PROFILE
+   ========================================================= */
+
+.sidebar-profile {
+  margin-top: auto;
+
+  padding-top: 0.75rem;
+
+  border-top: 1px solid var(--p-content-border-color);
+}
+
+
+.profile-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+
+  padding: 0.55rem;
+
+  border: none;
+
+  border-radius: 0.8rem;
+
+  background: transparent;
+
+  color: var(--p-text-color);
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition:
+    background-color 140ms ease,
+    transform 140ms ease;
+}
+
+
+.profile-button:hover {
+  background: var(--p-content-hover-background);
+}
+
+
+.profile-button:active {
+  transform: scale(0.985);
+}
+
+
+.profile-button:focus-visible {
+  outline: 2px solid
+  color-mix(
+    in srgb,
+    var(--p-primary-color) 50%,
+    transparent
+  );
+
+  outline-offset: 2px;
+}
+
+
+.profile-button-collapsed {
+  justify-content: center;
+
+  padding:
+    0.55rem
+    0;
+}
+
+
+/* =========================================================
+   PROFILE TEXT
+   ========================================================= */
+
+.profile-text {
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+.profile-text strong {
+  color: var(--p-text-color);
+
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.profile-text small {
+  margin-top: 0.15rem;
+
+  color: var(--p-text-muted-color);
+
+  font-size: 0.7rem;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.profile-more {
+  flex-shrink: 0;
+
+  color: var(--p-text-muted-color);
+
+  font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   MAIN COLUMN
+   ========================================================= */
 
 .main-column {
   margin-left: var(--sidebar-width);
+
+  transition:
+    margin-left 200ms ease;
 }
 
-/* Sur mobile, la sidebar fixe disparaît */
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.app-topbar {
+  height: 4rem;
+
+  padding:
+    0
+    1rem;
+
+  background: color-mix(
+    in srgb,
+    var(--p-content-background) 88%,
+    transparent
+  );
+
+  border-bottom: 1px solid var(--p-content-border-color);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+
+/* =========================================================
+   TOPBAR TITLE
+   ========================================================= */
+
+.topbar-title {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: 0.15rem;
+}
+
+
+.topbar-title span {
+  color: var(--p-text-muted-color);
+
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+
+.topbar-title strong {
+  margin-top: 0.05rem;
+
+  color: var(--p-text-color);
+
+  font-size: 0.9rem;
+  font-weight: 650;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.app-main {
+  padding: 1.25rem;
+
+  background: transparent;
+}
+
+
+.app-page-container {
+  width: 100%;
+
+  max-width: 1280px;
+
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+/*
+ * Les couleurs importantes utilisent déjà les tokens
+ * sémantiques PrimeNG.
+ *
+ * On ne surcharge ici que quelques effets.
+ */
+
+:host-context(.app-dark) .app-sidebar {
+  box-shadow:
+    6px 0 22px rgba(0, 0, 0, 0.28);
+}
+
+
+:host-context(.app-dark) .app-topbar {
+  box-shadow:
+    0 1px 10px rgba(0, 0, 0, 0.14);
+}
+
+
+:host-context(.app-dark) .nav-link:hover {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 9%,
+    var(--p-content-hover-background)
+  );
+}
+
+
+:host-context(.app-dark) .nav-link-active {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 18%,
+    var(--p-content-background)
+  );
+
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--p-primary-color) 22%,
+      transparent
+    );
+}
+
+
+:host-context(.app-dark) .nav-link-active:hover {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 22%,
+    var(--p-content-background)
+  );
+}
+
+
+:host-context(.app-dark)
+.nav-link-collapsed.nav-link-active {
+  background: color-mix(
+    in srgb,
+    var(--p-primary-color) 20%,
+    var(--p-content-background)
+  );
+}
+
+
+/* =========================================================
+   PRIME DRAWER
+   ========================================================= */
+
+/*
+ * Le drawer est déjà un composant PrimeNG.
+ * On ne fixe PAS son background afin de laisser Aura gérer
+ * automatiquement le mode clair / sombre.
+ */
+
+:host ::ng-deep .p-drawer {
+  border-color: var(--p-content-border-color);
+}
+
+
+:host ::ng-deep .p-drawer-header {
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media screen and (max-width: 767px) {
+
   .main-column {
     margin-left: 0;
+  }
+
+
+  .app-topbar {
+    height: 3.75rem;
+
+    padding:
+      0
+      0.75rem;
+  }
+
+
+  .topbar-title span {
+    display: none;
+  }
+
+
+  .topbar-title strong {
+    font-size: 0.9rem;
+  }
+
+
+  .app-main {
+    padding: 1rem;
+  }
+
+
+  .app-page-container {
+    max-width: 100%;
+  }
+
+
+  .sidebar-inner {
+    padding:
+      0.25rem
+      0;
+  }
+
+
+  .sidebar-nav {
+    padding-top: 0.25rem;
+  }
+
+
+  .nav-group {
+    margin-bottom: 1.1rem;
+  }
+
+
+  .nav-link {
+    min-height: 2.75rem;
+
+    border-radius: 0.7rem;
+  }
+}
+
+
+/* =========================================================
+   TABLET / DESKTOP
+   ========================================================= */
+
+@media screen and (min-width: 768px) {
+
+  .app-topbar {
+    padding:
+      0
+      1.25rem;
+  }
+
+
+  .app-main {
+    padding: 1.5rem;
+  }
+}
+
+
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media screen and (min-width: 1400px) {
+
+  .app-main {
+    padding:
+      1.75rem
+      2rem;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .desktop-sidebar,
+  .main-column,
+  .nav-link,
+  .nav-icon,
+  .brand-link,
+  .profile-button,
+  .app-sidebar,
+  .app-topbar,
+  .app-shell {
+    transition: none;
   }
 }

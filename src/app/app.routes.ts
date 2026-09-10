@@ -34,6 +34,9 @@ import { DriverDeliveries } from './pages/driver/driver-deliveries/driver-delive
 import { DriverDeliveryDetail } from './pages/driver/driver-delivery-detail/driver-delivery-detail'
 import { AddressForm } from './pages/profile/address-form/address-form'
 import { ClientDashboard } from './pages/client/client-dashboard/client-dashboard'
+import { ManagerDashboardComponent } from './pages/manager/manager-dashboard/manager-dashboard'
+import { DriverDashboard } from './pages/driver/driver-dashboard/driver-dashboard'
+import { DriverProfile } from './pages/driver/driver-profile/driver-profile'
 
 export const routes: Routes = [
   /*
@@ -131,12 +134,26 @@ export const routes: Routes = [
       {
         path: 'driver/deliveries/:id',
         component: DriverDeliveryDetail,
-      },{
-        path:'client/addresses',
-        component:AddressForm
-      },{
+      },
+      {
+        path: 'client/addresses',
+        component: AddressForm,
+      },
+      {
         path: 'client/dashboard',
         component: ClientDashboard,
+      },
+      {
+        path: 'dashboard',
+        component: ManagerDashboardComponent,
+      },
+      {
+        path: 'driver/dashboard',
+        component: DriverDashboard,
+      },
+      {
+        path: 'driver/profile',
+        component: DriverProfile,
       },
 
       /*

@@ -1,10 +1,17 @@
-<div class="p-4">
-  <div class="flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="m-0">Tracking colis #{{ parcelId }}</h2>
-      <p class="text-color-secondary mt-2 mb-0">
-        Suivi de la position, historique et estimation dynamique.
-      </p>
+<div class="tracking-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon">
+        <i class="pi pi-map-marker"></i>
+      </div>
+
+      <div>
+        <h2>Tracking colis #{{ parcelId }}</h2>
+        <p>
+          Suivi de la position, historique et estimation dynamique.
+        </p>
+      </div>
     </div>
 
     <p-button
@@ -17,224 +24,272 @@
   </div>
 
   @if (initialLoading()) {
-    <div class="surface-card border-round p-4 mb-4">
-      Chargement tracking...
-    </div>
+    <section class="loading-card">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Chargement tracking...</span>
+    </section>
   } @else {
-    <div class="grid">
-
-      <div class="col-12 lg:col-7">
-        <p-card header="Carte de suivi">
-          @if (refreshing()) {
-            <small class="text-color-secondary">
-              Mise à jour des données...
-            </small>
-          }
-
-          <div
-            id="tracking-map"
-            style="height: 420px; width: 100%; border-radius: 12px;"
-          ></div>
-        </p-card>
-      </div>
-
-      <div class="col-12 lg:col-5">
-        <p-card header="Estimation">
-          <div class="flex flex-column gap-3">
-
-            <div>
-              <span class="font-semibold">Statut délai :</span>
-              <p-tag
-                [value]="getDelayLabel()"
-                [severity]="getDelaySeverity()"
-              />
-            </div>
-
-            <div>
-              <span class="font-semibold">Distance restante :</span>
-              {{ formatDistance(estimate()?.remainingDistanceMeters) }}
-            </div>
-
-            <div>
-              <span class="font-semibold">Durée restante :</span>
-              {{ formatDuration(estimate()?.remainingDurationSeconds) }}
-            </div>
-
-            <div>
-              <span class="font-semibold">ETA dynamique :</span>
-              {{ estimate()?.estimatedArrival ? (estimate()?.estimatedArrival | date:'short') : '-' }}
-            </div>
-
-            <div>
-              <span class="font-semibold">Retard estimé :</span>
-              {{ estimate()?.delayInMinutes || 0 }} min
-            </div>
-
-            <div>
-              <span class="font-semibold">Dernière mise à jour :</span>
-              {{ estimate()?.updatedAt ? (estimate()?.updatedAt | date:'short') : '-' }}
-            </div>
-
+    <!-- Zone principale -->
+    <div class="tracking-main-grid">
+      <!-- Carte -->
+      <section class="tracking-card map-card">
+        <div class="card-header">
+          <div>
+            <h3>Carte de suivi</h3>
+            <p>Position actuelle du livreur et destination du colis.</p>
           </div>
-        </p-card>
 
-        <p-card header="Dernière position" styleClass="mt-4">
+          @if (refreshing()) {
+            <span class="refresh-badge">
+              <i class="pi pi-spin pi-spinner"></i>
+              Mise à jour
+            </span>
+          }
+        </div>
+
+        <div class="map-wrapper">
+          <div id="tracking-map"></div>
+        </div>
+      </section>
+
+      <!-- Infos à droite -->
+      <div class="side-panel">
+        <!-- Estimation -->
+        <section class="tracking-card">
+          <div class="card-header compact">
+            <div>
+              <h3>Estimation</h3>
+              <p>ETA et retard estimé.</p>
+            </div>
+
+            <p-tag
+              [value]="getDelayLabel()"
+              [severity]="getDelaySeverity()"
+            />
+          </div>
+
+          <div class="info-list">
+            <div class="info-row">
+              <span>Distance restante</span>
+              <strong>{{ formatDistance(estimate()?.remainingDistanceMeters) }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Durée restante</span>
+              <strong>{{ formatDuration(estimate()?.remainingDurationSeconds) }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>ETA dynamique</span>
+              <strong>
+                {{ estimate()?.estimatedArrival ? (estimate()?.estimatedArrival | date:'short') : '-' }}
+              </strong>
+            </div>
+
+            <div class="info-row">
+              <span>Retard estimé</span>
+              <strong>{{ estimate()?.delayInMinutes || 0 }} min</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Dernière mise à jour</span>
+              <strong>
+                {{ estimate()?.updatedAt ? (estimate()?.updatedAt | date:'short') : '-' }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dernière position -->
+        <section class="tracking-card">
+          <div class="card-header compact">
+            <div>
+              <h3>Dernière position</h3>
+              <p>Dernière position reçue.</p>
+            </div>
+
+            <i class="pi pi-location-arrow header-icon"></i>
+          </div>
+
           @if (lastPosition()) {
-            <div class="flex flex-column gap-3">
-              <div>
-                <span class="font-semibold">Latitude :</span>
-                {{ lastPosition()?.latitude }}
+            <div class="info-list">
+              <div class="info-row">
+                <span>Latitude</span>
+                <strong>{{ lastPosition()?.latitude }}</strong>
               </div>
 
-              <div>
-                <span class="font-semibold">Longitude :</span>
-                {{ lastPosition()?.longitude }}
+              <div class="info-row">
+                <span>Longitude</span>
+                <strong>{{ lastPosition()?.longitude }}</strong>
               </div>
 
-              <div>
-                <span class="font-semibold">Lieu :</span>
-                {{ lastPosition()?.locationLabel || '-' }}
+              <div class="info-row">
+                <span>Lieu</span>
+                <strong>{{ lastPosition()?.locationLabel || '-' }}</strong>
               </div>
 
-              <div>
-                <span class="font-semibold">Heure :</span>
-                {{ lastPosition()?.eventTime | date:'short' }}
+              <div class="info-row">
+                <span>Heure</span>
+                <strong>{{ lastPosition()?.eventTime | date:'short' }}</strong>
               </div>
             </div>
           } @else {
-            <p>Aucune position reçue pour ce colis.</p>
+            <div class="empty-small">
+              <i class="pi pi-info-circle"></i>
+              <span>Aucune position reçue pour ce colis.</span>
+            </div>
           }
-        </p-card>
+        </section>
       </div>
-
-      <div class="col-12">
-        <p-card header="Envoyer une position">
-          <div class="grid">
-
-            <div class="col-12 md:col-6">
-              <label class="block mb-2 font-medium">Latitude</label>
-              <p-inputNumber
-                class="w-full"
-                [(ngModel)]="form.latitude"
-                [minFractionDigits]="4"
-                [maxFractionDigits]="8"
-              />
-            </div>
-
-            <div class="col-12 md:col-6">
-              <label class="block mb-2 font-medium">Longitude</label>
-              <p-inputNumber
-                class="w-full"
-                [(ngModel)]="form.longitude"
-                [minFractionDigits]="4"
-                [maxFractionDigits]="8"
-              />
-            </div>
-
-            <div class="col-12 md:col-6">
-              <label class="block mb-2 font-medium">Lieu</label>
-              <input
-                pInputText
-                class="w-full"
-                [(ngModel)]="form.locationLabel"
-                placeholder="Ex: Maarif, Casablanca"
-              />
-            </div>
-
-            <div class="col-12 md:col-3">
-              <label class="block mb-2 font-medium">Distance restante en mètres</label>
-              <p-inputNumber
-                class="w-full"
-                [(ngModel)]="form.remainingDistanceMeters"
-              />
-            </div>
-
-            <div class="col-12 md:col-3">
-              <label class="block mb-2 font-medium">Durée restante en secondes</label>
-              <p-inputNumber
-                class="w-full"
-                [(ngModel)]="form.remainingDurationSeconds"
-              />
-            </div>
-
-            <div class="col-12">
-              <label class="block mb-2 font-medium">Description</label>
-              <textarea
-                pTextarea
-                class="w-full"
-                rows="3"
-                [(ngModel)]="form.description"
-                placeholder="Ex: Position envoyée depuis le dashboard de test"
-              ></textarea>
-            </div>
-
-            <div class="col-12 flex gap-2">
-              <p-button
-                label="Utiliser ma position actuelle"
-                icon="pi pi-map-marker"
-                severity="secondary"
-                [outlined]="true"
-                (onClick)="useCurrentBrowserPosition()"
-              />
-
-              <p-button
-                label="Envoyer position"
-                icon="pi pi-send"
-                [loading]="submitting()"
-                (onClick)="sendPosition()"
-              />
-            </div>
-
-          </div>
-        </p-card>
-      </div>
-
-      <div class="col-12">
-        <p-card header="Historique tracking">
-          <p-table
-            [value]="history()"
-            [paginator]="true"
-            [rows]="5"
-            responsiveLayout="scroll"
-          >
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Type</th>
-                <th>Lieu</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Date</th>
-                <th>Description</th>
-              </tr>
-            </ng-template>
-
-            <ng-template pTemplate="body" let-event>
-              <tr>
-                <td>
-                  <p-tag
-                    [value]="event.eventType"
-                    [severity]="event.eventType === 'DELAY_DETECTED' ? 'danger' : 'info'"
-                  />
-                </td>
-                <td>{{ event.locationLabel || '-' }}</td>
-                <td>{{ event.latitude }}</td>
-                <td>{{ event.longitude }}</td>
-                <td>{{ event.eventTime | date:'short' }}</td>
-                <td>{{ event.description || '-' }}</td>
-              </tr>
-            </ng-template>
-
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="6" class="text-center p-4">
-                  Aucun événement tracking.
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </p-card>
-      </div>
-
     </div>
+
+    <!-- Envoyer position -->
+    <section class="tracking-card send-position-card">
+      <div class="card-header">
+        <div>
+          <h3>Envoyer une position</h3>
+          <p>Mettre à jour manuellement ou automatiquement la position du livreur.</p>
+        </div>
+
+        <div class="header-actions">
+          <p-button
+            label="Position actuelle"
+            icon="pi pi-map-marker"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="useCurrentBrowserPosition()"
+          />
+
+          <p-button
+            label="Envoyer"
+            icon="pi pi-send"
+            [loading]="submitting()"
+            (onClick)="sendPosition()"
+          />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Latitude</label>
+          <p-inputNumber
+            class="w-full"
+            inputStyleClass="w-full"
+            [(ngModel)]="form.latitude"
+            [minFractionDigits]="4"
+            [maxFractionDigits]="8"
+          />
+        </div>
+
+        <div class="form-field">
+          <label>Longitude</label>
+          <p-inputNumber
+            class="w-full"
+            inputStyleClass="w-full"
+            [(ngModel)]="form.longitude"
+            [minFractionDigits]="4"
+            [maxFractionDigits]="8"
+          />
+        </div>
+
+        <div class="form-field">
+          <label>Lieu</label>
+          <input
+            pInputText
+            class="w-full"
+            [(ngModel)]="form.locationLabel"
+            placeholder="Ex: Maarif, Casablanca"
+          />
+        </div>
+
+        <div class="form-field">
+          <label>Distance restante</label>
+          <p-inputNumber
+            class="w-full"
+            inputStyleClass="w-full"
+            [(ngModel)]="form.remainingDistanceMeters"
+            suffix=" m"
+          />
+        </div>
+
+        <div class="form-field">
+          <label>Durée restante</label>
+          <p-inputNumber
+            class="w-full"
+            inputStyleClass="w-full"
+            [(ngModel)]="form.remainingDurationSeconds"
+            suffix=" s"
+          />
+        </div>
+
+        <div class="form-field description-field">
+          <label>Description</label>
+          <textarea
+            pTextarea
+            class="w-full"
+            rows="2"
+            [(ngModel)]="form.description"
+            placeholder="Ex: Position envoyée depuis le dashboard de test"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Historique -->
+    <section class="tracking-card history-card">
+      <div class="card-header">
+        <div>
+          <h3>Historique tracking</h3>
+          <p>Liste des positions et événements de suivi.</p>
+        </div>
+      </div>
+
+      <p-table
+        styleClass="tracking-history-table"
+        [value]="history()"
+        [paginator]="true"
+        [rows]="5"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Type</th>
+            <th>Lieu</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Date</th>
+            <th>Description</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-event>
+          <tr>
+            <td>
+              <p-tag
+                [value]="event.eventType"
+                [severity]="event.eventType === 'DELAY_DETECTED' ? 'danger' : 'info'"
+              />
+            </td>
+
+            <td>{{ event.locationLabel || '-' }}</td>
+            <td>{{ event.latitude }}</td>
+            <td>{{ event.longitude }}</td>
+            <td>{{ event.eventTime | date:'short' }}</td>
+            <td>{{ event.description || '-' }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="pi pi-map"></i>
+                <span>Aucun événement tracking.</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
   }
 </div>

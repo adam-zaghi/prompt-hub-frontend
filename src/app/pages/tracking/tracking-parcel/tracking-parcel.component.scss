@@ -1,0 +1,406 @@
+:host {
+  display: block;
+}
+
+.tracking-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* =========================
+   Header
+========================= */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.page-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.page-title-block h2 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.page-title-block p {
+  margin: 0.3rem 0 0;
+  color: var(--text-color-secondary);
+  font-size: 0.95rem;
+}
+
+/* =========================
+   Cards
+========================= */
+
+.tracking-card,
+.loading-card {
+  border-radius: 1.25rem;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
+}
+
+.tracking-card {
+  padding: 1.1rem;
+}
+
+.loading-card {
+  min-height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  color: var(--text-color-secondary);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-header.compact {
+  margin-bottom: 0.85rem;
+}
+
+.card-header h3 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.card-header p {
+  margin: 0.3rem 0 0;
+  color: var(--text-color-secondary);
+  font-size: 0.88rem;
+}
+
+.header-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refresh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* =========================
+   Main layout
+========================= */
+
+.tracking-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(22rem, 0.75fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =========================
+   Map
+========================= */
+
+.map-card {
+  align-self: start;
+}
+
+.map-wrapper {
+  height: 430px;
+  width: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+  background: color-mix(in srgb, var(--surface-ground) 80%, var(--surface-card));
+}
+
+#tracking-map {
+  height: 100%;
+  width: 100%;
+}
+
+/* =========================
+   Info list
+========================= */
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.info-row {
+  min-height: 3rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--surface-ground) 70%, transparent);
+  border: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.info-row span {
+  color: var(--text-color-secondary);
+  font-size: 0.87rem;
+}
+
+.info-row strong {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  text-align: right;
+  font-weight: 700;
+}
+
+.empty-small {
+  min-height: 8rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface-ground) 70%, transparent);
+  border: 1px dashed var(--surface-border);
+  color: var(--text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+/* =========================
+   Send position form
+========================= */
+
+.send-position-card {
+  padding-bottom: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-field label {
+  color: var(--text-color);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.description-field {
+  grid-column: span 2;
+}
+
+:host ::ng-deep .form-field .p-inputnumber,
+:host ::ng-deep .form-field .p-inputnumber-input {
+  width: 100%;
+}
+
+.form-field input,
+.form-field textarea,
+:host ::ng-deep .form-field .p-inputnumber-input {
+  border-radius: 0.85rem;
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 2.8rem;
+}
+
+/* =========================
+   History
+========================= */
+
+.history-card {
+  overflow: hidden;
+}
+
+:host ::ng-deep .tracking-history-table .p-datatable-thead > tr > th {
+  background: color-mix(in srgb, var(--surface-ground) 70%, var(--surface-card));
+  color: var(--text-color-secondary);
+  border-color: var(--surface-border);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+:host ::ng-deep .tracking-history-table .p-datatable-tbody > tr {
+  background: var(--surface-card);
+  color: var(--text-color);
+}
+
+:host ::ng-deep .tracking-history-table .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover);
+}
+
+:host ::ng-deep .tracking-history-table .p-datatable-tbody > tr > td {
+  border-color: var(--surface-border);
+}
+
+:host ::ng-deep .tracking-history-table .p-paginator {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+}
+
+.empty-state {
+  min-height: 8rem;
+  color: var(--text-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* =========================
+   Dark mode
+========================= */
+
+:host-context(.app-dark) {
+  .tracking-card,
+  .loading-card {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+  }
+
+  .map-wrapper,
+  .info-row,
+  .empty-small,
+  .empty-state {
+    background: #273449;
+    border-color: #3f4f66;
+  }
+
+  ::ng-deep .tracking-history-table .p-datatable-header,
+  ::ng-deep .tracking-history-table .p-datatable-wrapper,
+  ::ng-deep .tracking-history-table .p-datatable-table,
+  ::ng-deep .tracking-history-table .p-paginator {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  ::ng-deep .tracking-history-table .p-datatable-thead > tr > th {
+    background: #273449;
+    color: var(--text-color);
+    border-color: #374151;
+  }
+
+  ::ng-deep .tracking-history-table .p-datatable-tbody > tr {
+    background: #1f2937;
+    color: var(--text-color);
+  }
+
+  ::ng-deep .tracking-history-table .p-datatable-tbody > tr:hover {
+    background: #2b3a50;
+  }
+
+  ::ng-deep .tracking-history-table .p-datatable-tbody > tr > td {
+    border-color: #374151;
+  }
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media screen and (max-width: 1200px) {
+  .tracking-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .side-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .description-field {
+    grid-column: span 3;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .side-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .description-field {
+    grid-column: auto;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .map-wrapper {
+    height: 360px;
+  }
+}
